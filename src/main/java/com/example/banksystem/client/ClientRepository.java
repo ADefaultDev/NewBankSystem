@@ -10,6 +10,6 @@ import java.util.Optional;
 public interface ClientRepository extends JpaRepository<Client, Long> {
 
     @Query("SELECT s FROM Client s WHERE s.passport = ?1")
-    Optional<Client> findClientByPassport(double passport);
+    Optional<Client> findClientByPassport(String passport);
 
 }

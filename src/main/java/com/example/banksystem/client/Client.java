@@ -14,13 +14,12 @@ public class Client {
     private String name;
     @Column(name = "surname", length = 50, nullable = false)
     private String surname;
-
     @Column(name = "patronymic", length = 50, nullable = false)
     private String patronymic;
     @Column(name = "balance", nullable = false)
     private double balance;
-    @Column(name = "passport", length = 10, nullable = false)
-    private double passport;
+    @Column(name = "passport", length = 50, nullable = false)
+    private String passport;
 
     /*@Column(name = "values",length = 255, nullable = true)
     @Type(type = "com.example.demo.LongArrayCustomType")
@@ -33,7 +32,7 @@ public class Client {
 
     }
 
-    public Client(String name, String surname, String patronymic, Double passport, double balance){
+    public Client(String name, String surname, String patronymic, String passport, double balance){
         this.name=name;
         this.surname=surname;
         this.patronymic=patronymic;
@@ -43,7 +42,7 @@ public class Client {
     }
 
 
-    public Client(Long id, String name, String surname, String patronymic, Double passport, double balance){
+    public Client(Long id, String name, String surname, String patronymic, String passport, double balance){
         this.id=id;
         this.name=name;
         this.surname=surname;
@@ -94,9 +93,9 @@ public class Client {
         this.balance = balance;
     }
 
-    public double getPassport(){return passport;}
+    public String getPassport(){return passport;}
 
-    public void setPassport(double passport){this.passport=passport;}
+    public void setPassport(String passport){this.passport=passport;}
 
     @Override
     public String toString() {

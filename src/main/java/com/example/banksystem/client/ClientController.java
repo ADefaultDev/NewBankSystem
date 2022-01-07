@@ -1,15 +1,12 @@
-package com.example.banksystem.controller;
+package com.example.banksystem.client;
 
-import com.example.banksystem.client.Client;
-import com.example.banksystem.client.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping(path = "QuickBank/v1/client")
+@RequestMapping(path = "/BankSystem")
 public class ClientController {
 
     private final ClientService clientService;
@@ -27,6 +24,16 @@ public class ClientController {
     @PostMapping
     public void addClient(@RequestBody Client client){
         clientService.addNewClient(client);
+    }
+
+    @DeleteMapping(path = "{clientId}")
+    public void deleteClient(@PathVariable("clientId") Long clientId) {
+        clientService.deleteClient(clientId);
+    }
+
+    @PutMapping(path = "{clientId}")
+    public void updateClient(@PathVariable("clientId") Long clientId, @RequestParam(required = false) String name, @RequestParam(required = false) String passport) {
+        clientService.updateClient(clientId, name, passport);
     }
 
 }
