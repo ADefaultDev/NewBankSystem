@@ -12,8 +12,8 @@ public class ClientConfig {
     @Bean
     CommandLineRunner commandLineRunner(ClientRepository repository){
         return args -> {
-            Client jo = new Client("Jo","Jonson","Bart","6561341345", 10d);
-            Client bo = new Client("Bo","Bonny","Clinton", "1483607851", 10d);
+            Client jo = new Client("Jo","Jonson","Bart","6561341345");
+            Client bo = new Client("Bo","Bonny","Clinton", "1483607851");
             repository.saveAll(List.of(jo, bo));
         };
 

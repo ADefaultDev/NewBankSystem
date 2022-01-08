@@ -43,8 +43,8 @@ public class ClientService {
     public void updateClient(Long clientId, String name, String passport) {
         Client client = clientRepository.findById(clientId).orElseThrow(() -> new IllegalStateException("client with id " + clientId + "does not exist"));
 
-        if (name != null && name.length() > 0 && !Objects.equals(client.getName(), name)) {
-            client.setName(name);
+        if (name != null && name.length() > 0 && !Objects.equals(client.getLastname(), name)) {
+            client.setLastname(name);
         }
 
         if (passport != null && passport.length() > 0 && !Objects.equals(client.getPassport(), passport)) {

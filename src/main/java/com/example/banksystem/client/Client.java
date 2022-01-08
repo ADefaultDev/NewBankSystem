@@ -10,46 +10,33 @@ public class Client {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
-    @Column(name = "name", length = 50, nullable = false)
-    private String name;
-    @Column(name = "surname", length = 50, nullable = false)
-    private String surname;
-    @Column(name = "patronymic", length = 50, nullable = false)
-    private String patronymic;
-    @Column(name = "balance", nullable = false)
-    private double balance;
-    @Column(name = "passport", length = 50, nullable = false)
+    @Column(name = "lastname", length = 50, nullable = false)
+    private String lastname;
+    @Column(name = "firstname", length = 50, nullable = false)
+    private String firstname;
+    @Column(name = "middlename", length = 50, nullable = false)
+    private String middlename;
+    @Column(name = "passport", length = 10, nullable = false)
     private String passport;
-
-    /*@Column(name = "values",length = 255, nullable = true)
-    @Type(type = "com.example.demo.LongArrayCustomType")
-    private Long[] values;
-    public Long[] getValues(){
-        return values;
-    }*/
 
     public Client(){
 
     }
 
-    public Client(String name, String surname, String patronymic, String passport, double balance){
-        this.name=name;
-        this.surname=surname;
-        this.patronymic=patronymic;
+    public Client(String name, String firstname, String middlename, String passport){
+        this.lastname =name;
+        this.firstname = firstname;
+        this.middlename = middlename;
         this.passport=passport;
-        this.balance=balance;
-        //this.values=values;
     }
 
 
-    public Client(Long id, String name, String surname, String patronymic, String passport, double balance){
+    public Client(Long id, String name, String firstname, String middlename, String passport){
         this.id=id;
-        this.name=name;
-        this.surname=surname;
-        this.patronymic=patronymic;
+        this.lastname =name;
+        this.firstname = firstname;
+        this.middlename = middlename;
         this.passport=passport;
-        this.balance=balance;
-        //this.values=values;
     }
 
 
@@ -61,36 +48,28 @@ public class Client {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getLastname() {
+        return lastname;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setLastname(String name) {
+        this.lastname = name;
     }
 
-    public String getSurname() {
-        return surname;
+    public String getFirstname() {
+        return firstname;
     }
 
-    public void setSurname(String surname) {
-        this.surname = surname;
+    public void setFirstname(String surname) {
+        this.firstname = surname;
     }
 
-    public String getPatronymic() {
-        return patronymic;
+    public String getMiddlename() {
+        return middlename;
     }
 
-    public void setPatronymic(String patronymic) {
-        this.patronymic = patronymic;
-    }
-
-    public double getBalance() {
-        return balance;
-    }
-
-    public void setBalance(double balance) {
-        this.balance = balance;
+    public void setMiddlename(String patronymic) {
+        this.middlename = patronymic;
     }
 
     public String getPassport(){return passport;}
@@ -101,11 +80,10 @@ public class Client {
     public String toString() {
         return "Client{" +
                 "id=" + id +
-                ", name='" + name + '\'' +
-                ", surname='" + surname + '\'' +
-                ", patronymic='" + patronymic + '\'' +
-                ", balance=" + balance +
-                ", passport=" + passport +
+                ", lastname='" + lastname + '\'' +
+                ", firstname='" + firstname + '\'' +
+                ", middlename='" + middlename + '\'' +
+                ", passport='" + passport + '\'' +
                 '}';
     }
 }
