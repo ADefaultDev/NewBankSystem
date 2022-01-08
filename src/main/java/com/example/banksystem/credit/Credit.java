@@ -15,6 +15,7 @@ public class Credit {
     private Long balance;
     @Column(name = "client", length = 10, nullable = false)
     private Long clientId;
+    //
 
 
 
