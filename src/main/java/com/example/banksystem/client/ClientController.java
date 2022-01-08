@@ -1,12 +1,14 @@
 package com.example.banksystem.client;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController
-@RequestMapping(path = "/BankSystem")
+@Controller
+@RequestMapping(path = "/BankSystem/client")
 public class ClientController {
 
     private final ClientService clientService;
@@ -16,14 +18,22 @@ public class ClientController {
         this.clientService=clientService;
     }
 
-    @GetMapping
+    @GetMapping("/list")
+    @ResponseBody
     public List<Client> getClients(){
         return clientService.getClients();
     }
 
-    @PostMapping
-    public void addClient(@RequestBody Client client){
+    @GetMapping(path = "/new")
+    public String  newClient(Model model){
+        model.addAttribute("client", new Client());
+        return "client/new";
+    }
+
+    @PostMapping()
+    public String addClient(@ModelAttribute("client") Client client) {
         clientService.addNewClient(client);
+        return "redirect:/BankSystem/client/list";
     }
 
     @DeleteMapping(path = "{clientId}")

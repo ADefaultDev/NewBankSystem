@@ -1,0 +1,24 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>New Client</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+<form th:method="POST" th:action="@{/BankSystem/bank}" th:object="${client}">
+    <label for="firstname">Enter Client firstname: </label>
+    <input type="text" th:field="*{firstname}" id="firstname"/>
+    <br/>
+    <label for="lastname">Enter Client lastname: </label>
+    <input type="text" th:field="*{lastname}" id="lastname"/>
+    <br/>
+    <label for="middlename">Enter Client middlename: </label>
+    <input type="text" th:field="*{middlename}" id="middlename"/>
+    <br/>
+    <label for="passport">Enter Client passport: </label>
+    <input type="text" th:field="*{passport}" id="passport"/>
+    <br/>
+    <input type="submit" value="Create"/>
+</form>
+</body>
+</html>
