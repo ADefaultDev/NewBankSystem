@@ -1,5 +1,7 @@
 package com.example.banksystem.credit;
 
+import com.example.banksystem.client.Client;
+
 import javax.persistence.*;
 
 @Entity
@@ -13,9 +15,18 @@ public class Credit {
     private Long creditType;
     @Column(name = "balance", length = 15, nullable = false)
     private Long balance;
-    @Column(name = "client", length = 10, nullable = false)
-    private Long clientId;
-    //
+    @ManyToOne
+    @JoinColumn(name = "client")
+    private Client client;
 
 
+    public Credit(){
+
+    }
+
+    public Credit(Long creditType, Long balance) {
+        this.creditType = creditType;
+        this.balance = balance;
+
+    }
 }

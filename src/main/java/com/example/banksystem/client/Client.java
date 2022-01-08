@@ -1,6 +1,12 @@
 package com.example.banksystem.client;
 
+import com.example.banksystem.credit.Credit;
+import com.example.banksystem.deposit.DepositType;
+import org.hibernate.annotations.Type;
+
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "client")
@@ -18,21 +24,24 @@ public class Client {
     private String middlename;
     @Column(name = "passport", length = 10, nullable = false)
     private String passport;
+    @OneToMany
+    @Column(name = "credits", length = 10, nullable = false)
+    private List<Credit> credits;
 
     public Client(){
 
     }
 
-    public Client(String name, String firstname, String middlename, String passport){
+    public Client(String name, String firstname, String middlename, String passport, List<Credit> credits){
         this.lastname =name;
         this.firstname = firstname;
         this.middlename = middlename;
         this.passport=passport;
+        this.credits=credits;
     }
 
 
-    public Client(Long id, String name, String firstname, String middlename, String passport){
-        this.id=id;
+    public Client(String name, String firstname, String middlename, String passport){
         this.lastname =name;
         this.firstname = firstname;
         this.middlename = middlename;
