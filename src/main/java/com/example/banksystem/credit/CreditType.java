@@ -17,6 +17,17 @@ public class CreditType {
     @Column(name = "repayment_time", length = 8, nullable = false)
     private int repaymentTime;
 
+    public CreditType(){
+
+    }
+
+    public CreditType(String name, double rate, int minAmount, int repaymentTime) {
+        this.name = name;
+        this.rate = rate;
+        this.minAmount = minAmount;
+        this.repaymentTime = repaymentTime;
+    }
+
     public Long getId() {
         return id;
     }
