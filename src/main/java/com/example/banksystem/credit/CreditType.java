@@ -16,7 +16,7 @@ public class CreditType {
     private int minAmount;
     @Column(name = "repayment_time", length = 8, nullable = false)
     private int repaymentTime;
-
+    //
     public CreditType(){
 
     }
