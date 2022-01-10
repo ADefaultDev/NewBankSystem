@@ -23,20 +23,17 @@ public class Client {
     @Column(name = "passport", length = 10, nullable = false)
     private String passport;
     @OneToMany
-    private List<Credit> credits;
-    @OneToMany
     private List<Deposit> deposits;
 
     public Client(){
 
     }
 
-    public Client(String name, String firstname, String middlename, String passport, List<Credit> credits, List<Deposit> deposits){
+    public Client(String name, String firstname, String middlename, String passport, List<Deposit> deposits){
         this.lastname =name;
         this.firstname = firstname;
         this.middlename = middlename;
         this.passport=passport;
-        this.credits=credits;
         this.deposits=deposits;
     }
 
@@ -47,7 +44,6 @@ public class Client {
         this.middlename = middlename;
         this.passport=passport;
     }
-
 
     public Long getId() {
         return id;
@@ -85,13 +81,6 @@ public class Client {
 
     public void setPassport(String passport){this.passport=passport;}
 
-    public List<Credit> getCredits() {
-        return credits;
-    }
-
-    public void setCredits(List<Credit> credits) {
-        this.credits = credits;
-    }
 
     @Override
     public String toString() {

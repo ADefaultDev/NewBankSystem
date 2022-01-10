@@ -1,5 +1,7 @@
 package com.example.banksystem.credit;
 
+import com.example.banksystem.currency.Currency;
+
 import javax.persistence.*;
 
 @Entity
@@ -12,6 +14,8 @@ public class CreditType {
     private String name;
     @Column(name = "rate", length = 4, nullable = false)
     private double rate;
+    @ManyToOne
+    private Currency currency;
     @Column(name = "min_amount", length = 8, nullable = false)
     private int minAmount;
     @Column(name = "repayment_time", length = 8, nullable = false)
@@ -21,11 +25,12 @@ public class CreditType {
 
     }
 
-    public CreditType(String name, double rate, int minAmount, int repaymentTime) {
+    public CreditType(String name, double rate, int minAmount, int repaymentTime, Currency currency) {
         this.name = name;
         this.rate = rate;
         this.minAmount = minAmount;
         this.repaymentTime = repaymentTime;
+        this.currency = currency;
     }
 
     public Long getId() {
@@ -68,12 +73,21 @@ public class CreditType {
         this.repaymentTime = repaymentTime;
     }
 
+    public Currency getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(Currency currency) {
+        this.currency = currency;
+    }
+
     @Override
     public String toString() {
         return "CreditType{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", rate=" + rate +
+                ", currency=" + currency +
                 ", minAmount=" + minAmount +
                 ", repaymentTime=" + repaymentTime +
                 '}';

@@ -13,6 +13,14 @@ public class Currency {
     @Column(name = "denomination", length = 40, nullable = false)
     private String denomination;
 
+    public Currency(){
+
+    }
+
+    public Currency(String denomination) {
+        this.denomination = denomination;
+    }
+
     public Long getId() {
         return id;
     }
