@@ -48,7 +48,7 @@ public class ClientService {
         }
 
         if (passport != null && passport.length() > 0 && !Objects.equals(client.getPassport(), passport)) {
-            Optional<Client> clientOpt = clientRepository.findClientByPassport(passport);
+            Optional <Client> clientOpt = clientRepository.findClientByPassport(passport);
             if(clientOpt.isPresent()){
                 throw new IllegalStateException("passport exist");
             }

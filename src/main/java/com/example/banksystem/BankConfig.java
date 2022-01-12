@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.List;
+import java.util.Optional;
 
 @Configuration
 public class BankConfig {
@@ -39,15 +40,30 @@ public class BankConfig {
             Client jo = new Client("Jo","Jonson","Bart","6561341345");
             Client ra = new Client("Ra","Aga","Abdu","1461348365");
             Client se = new Client("Se","Va","Oleg","5411728329");
-            clientRepository.saveAll(List.of(jo,ra,se));
+
 
             //Crete credits
-            Credit credit1 = new Credit(creditType1,40l,jo);
-            Credit credit2 = new Credit(creditType2,510000l,ra);
-            Credit credit3 = new Credit(creditType3,2893l,se);
-            creditRepository.saveAll(List.of(credit1,credit2,credit3));
+            Credit credit1 = new Credit(creditType1,40l);
+            Credit credit2 = new Credit(creditType2,510000l);
+            Credit credit3 = new Credit(creditType3,2893l);
+            Credit credit4 = new Credit(creditType3,32893l);
+            jo.addCredit(credit1);
+            ra.addCredit(credit2);
+            ra.addCredit(credit3);
 
-            //Create deposits
+            //Save clients
+            clientRepository.saveAll(List.of(jo,ra,se));
+
+            //Find client and add him credit
+            se = clientRepository.findClientByPassport("5411728329").get();
+            se.addCredit(credit4);
+            clientRepository.save(se);
+
+            //Get client and remove his credit
+            ra.removeCredit(credit2);
+            clientRepository.save(ra);
+
+
 
 
 

@@ -4,6 +4,7 @@ import com.example.banksystem.credit.Credit;
 import com.example.banksystem.deposit.Deposit;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -22,11 +23,23 @@ public class Client {
     private String middlename;
     @Column(name = "passport", length = 10, nullable = false)
     private String passport;
+    @OneToMany(fetch = FetchType.EAGER, targetEntity=Credit.class, mappedBy="client", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Credit> credits = new ArrayList<>();
     @OneToMany
     private List<Deposit> deposits;
 
     public Client(){
 
+    }
+
+    public Client(String name, String firstname, String middlename, String passport, List<Deposit> deposits,
+                  List<Credit> credits){
+        this.lastname =name;
+        this.firstname = firstname;
+        this.middlename = middlename;
+        this.passport=passport;
+        this.deposits=deposits;
+        this.credits=credits;
     }
 
     public Client(String name, String firstname, String middlename, String passport, List<Deposit> deposits){
@@ -43,6 +56,16 @@ public class Client {
         this.firstname = firstname;
         this.middlename = middlename;
         this.passport=passport;
+
+    }
+
+    public void addCredit(Credit credit){
+        this.credits.add(credit);
+        credit.setClient(this);
+    }
+    public void removeCredit(Credit credit){
+        this.credits.remove(credit);
+        credit.setClient(null);
     }
 
     public Long getId() {
@@ -81,6 +104,21 @@ public class Client {
 
     public void setPassport(String passport){this.passport=passport;}
 
+    public List<Credit> getCredits() {
+        return credits;
+    }
+
+    public void setCredits(List<Credit> credits) {
+        this.credits = credits;
+    }
+
+    public List<Deposit> getDeposits() {
+        return deposits;
+    }
+
+    public void setDeposits(List<Deposit> deposits) {
+        this.deposits = deposits;
+    }
 
     @Override
     public String toString() {

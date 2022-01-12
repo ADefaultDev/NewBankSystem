@@ -15,7 +15,7 @@ public class Credit {
     private CreditType creditType;
     @Column(name = "balance", length = 15, nullable = false)
     private Long balance;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     private Client client;
 
 
@@ -27,6 +27,11 @@ public class Credit {
         this.creditType = creditType;
         this.balance = balance;
         this.client = client;
+    }
+
+    public Credit(CreditType creditType, Long balance) {
+        this.creditType = creditType;
+        this.balance = balance;
     }
 
     public Long getId() {
