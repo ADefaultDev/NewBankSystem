@@ -3,13 +3,11 @@ package com.example.banksystem;
 import com.example.banksystem.client.Client;
 import com.example.banksystem.client.ClientRepository;
 import com.example.banksystem.credit.Credit;
-import com.example.banksystem.credit.CreditRepository;
 import com.example.banksystem.credit.CreditType;
 import com.example.banksystem.credit.CreditTypeRepository;
 import com.example.banksystem.currency.Currency;
 import com.example.banksystem.currency.CurrencyRepository;
 import com.example.banksystem.deposit.Deposit;
-import com.example.banksystem.deposit.DepositRepository;
 import com.example.banksystem.deposit.DepositType;
 import com.example.banksystem.deposit.DepositTypeRepository;
 import org.springframework.boot.CommandLineRunner;
@@ -17,7 +15,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.List;
-import java.util.Optional;
 
 @Configuration
 public class BankConfig {
@@ -25,8 +22,8 @@ public class BankConfig {
     @Bean
     CommandLineRunner commandLineRunner(ClientRepository clientRepository,
                                         CreditTypeRepository creditTypeRepository, CurrencyRepository currencyRepository,
-                                        DepositRepository depositRepository, DepositTypeRepository depositTypeRepository
-                                        ){
+                                        DepositTypeRepository depositTypeRepository
+    ){
         return args -> {
             //Create currency
             Currency rubles = new Currency("Ruble");
@@ -54,10 +51,10 @@ public class BankConfig {
 
 
             //Crete credits
-            Credit credit1 = new Credit(creditType1,40l);
-            Credit credit2 = new Credit(creditType2,510000l);
-            Credit credit3 = new Credit(creditType3,2893l);
-            Credit credit4 = new Credit(creditType3,32893l);
+            Credit credit1 = new Credit(creditType1, 40L);
+            Credit credit2 = new Credit(creditType2, 510000L);
+            Credit credit3 = new Credit(creditType3, 2893L);
+            Credit credit4 = new Credit(creditType3,32893L);
             jo.addCredit(credit1);
             ra.addCredit(credit2);
             ra.addCredit(credit3);
