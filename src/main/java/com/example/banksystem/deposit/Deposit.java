@@ -1,5 +1,8 @@
 package com.example.banksystem.deposit;
 
+import com.example.banksystem.client.Client;
+import com.example.banksystem.credit.CreditType;
+
 import javax.persistence.*;
 
 @Entity
@@ -9,12 +12,21 @@ public class Deposit {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
-    @Column(name = "deposit_type", length = 40, nullable = false)
-    private Long depositType;
+    @ManyToOne(fetch = FetchType.EAGER)
+    private DepositType depositType;
     @Column(name = "balance", length = 15, nullable = false)
-    private Long balance;
-    @Column(name = "client", length = 10, nullable = false)
-    private Long clientId;
+    private int balance;
+    @ManyToOne(fetch = FetchType.EAGER)
+    private Client client;
+
+    public Deposit(){
+
+    }
+
+    public Deposit(DepositType depositType, int balance){
+        this.depositType = depositType;
+        this.balance = balance;
+    }
 
     public Long getId() {
         return id;
@@ -24,28 +36,28 @@ public class Deposit {
         this.id = id;
     }
 
-    public Long getDepositType() {
+    public DepositType getDepositType() {
         return depositType;
     }
 
-    public void setDepositType(Long depositType) {
+    public void setDepositType(DepositType depositType) {
         this.depositType = depositType;
     }
 
-    public Long getBalance() {
+    public int getBalance() {
         return balance;
     }
 
-    public void setBalance(Long balance) {
+    public void setBalance(int balance) {
         this.balance = balance;
     }
 
-    public Long getClientId() {
-        return clientId;
+    public Client getClient() {
+        return client;
     }
 
-    public void setClientId(Long clientId) {
-        this.clientId = clientId;
+    public void setClient(Client client) {
+        this.client = client;
     }
 
     @Override
@@ -54,7 +66,7 @@ public class Deposit {
                 "id=" + id +
                 ", depositType=" + depositType +
                 ", balance=" + balance +
-                ", clientId=" + clientId +
+                ", clientId=" + client +
                 '}';
     }
 }

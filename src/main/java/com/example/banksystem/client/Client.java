@@ -2,6 +2,8 @@ package com.example.banksystem.client;
 
 import com.example.banksystem.credit.Credit;
 import com.example.banksystem.deposit.Deposit;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -23,10 +25,14 @@ public class Client {
     private String middlename;
     @Column(name = "passport", length = 10, nullable = false)
     private String passport;
-    @OneToMany(fetch = FetchType.EAGER, targetEntity=Credit.class, mappedBy="client", cascade = CascadeType.ALL, orphanRemoval = true)
+
+    @OneToMany(fetch = FetchType.EAGER, mappedBy="client", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Fetch(value = FetchMode.SUBSELECT)
     private List<Credit> credits = new ArrayList<>();
-    @OneToMany
-    private List<Deposit> deposits;
+
+    @OneToMany(fetch = FetchType.EAGER, mappedBy="client", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Fetch(value = FetchMode.SUBSELECT)
+    private List<Deposit> deposits = new ArrayList<>();
 
     public Client(){
 
@@ -67,6 +73,16 @@ public class Client {
         this.credits.remove(credit);
         credit.setClient(null);
     }
+
+    public void addDeposit(Deposit deposit){
+        this.deposits.add(deposit);
+        deposit.setClient(this);
+    }
+    public void removeDeposit(Deposit deposit){
+        this.deposits.remove(deposit);
+        deposit.setClient(null);
+    }
+
 
     public Long getId() {
         return id;

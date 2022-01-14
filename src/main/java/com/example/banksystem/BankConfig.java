@@ -8,6 +8,10 @@ import com.example.banksystem.credit.CreditType;
 import com.example.banksystem.credit.CreditTypeRepository;
 import com.example.banksystem.currency.Currency;
 import com.example.banksystem.currency.CurrencyRepository;
+import com.example.banksystem.deposit.Deposit;
+import com.example.banksystem.deposit.DepositRepository;
+import com.example.banksystem.deposit.DepositType;
+import com.example.banksystem.deposit.DepositTypeRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,8 +23,9 @@ import java.util.Optional;
 public class BankConfig {
 
     @Bean
-    CommandLineRunner commandLineRunner(ClientRepository clientRepository, CreditRepository creditRepository,
-                                        CreditTypeRepository creditTypeRepository, CurrencyRepository currencyRepository
+    CommandLineRunner commandLineRunner(ClientRepository clientRepository,
+                                        CreditTypeRepository creditTypeRepository, CurrencyRepository currencyRepository,
+                                        DepositRepository depositRepository, DepositTypeRepository depositTypeRepository
                                         ){
         return args -> {
             //Create currency
@@ -35,6 +40,12 @@ public class BankConfig {
             CreditType creditType3 = new CreditType("Europe moment", 10d, 7000, 9, euros);
             CreditType creditType4 = new CreditType("Не выгодно", 60d, 50000, 20, rubles);
             creditTypeRepository.saveAll(List.of(creditType1, creditType2, creditType3, creditType4));
+
+            //Create deposits types
+            DepositType depositType1 = new DepositType("Снежок", 1.2d, 300000);
+            DepositType depositType2 = new DepositType("Little deposit", 1.5d, 400000);
+            DepositType depositType3 = new DepositType("Вклад двойной", 3d, 1000000);
+            depositTypeRepository.saveAll(List.of(depositType1,depositType2,depositType3));
 
             //Create clients
             Client jo = new Client("Jo","Jonson","Bart","6561341345");
@@ -55,20 +66,18 @@ public class BankConfig {
             clientRepository.saveAll(List.of(jo,ra,se));
 
             //Find client and add him credit
-            se = clientRepository.findClientByPassport("5411728329").get();
             se.addCredit(credit4);
-            clientRepository.save(se);
 
-            //Get client and remove his credit
-            ra.removeCredit(credit2);
-            clientRepository.save(ra);
+            //Create deposits
+            Deposit deposit1 = new Deposit(depositType1, 1000000);
+            Deposit deposit2 = new Deposit(depositType2, 450000);
 
-
+            ra.addDeposit(deposit1);
+            se.addDeposit(deposit2);
+            clientRepository.saveAll(List.of(ra,se));
 
 
 
         };
-
-
     }
 }

@@ -11,7 +11,7 @@ public class Credit {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     private CreditType creditType;
     @Column(name = "balance", length = 15, nullable = false)
     private Long balance;

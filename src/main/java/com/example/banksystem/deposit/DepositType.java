@@ -3,7 +3,7 @@ package com.example.banksystem.deposit;
 import javax.persistence.*;
 
 @Entity
-@Table(name="credit_type")
+@Table(name="deposit_type")
 public class DepositType {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -14,6 +14,16 @@ public class DepositType {
     private double rate;
     @Column(name = "min_amount", length = 8, nullable = false)
     private int minAmount;
+
+    public DepositType(){
+
+    }
+
+    public DepositType(String name, double rate, int minAmount){
+        this.name = name;
+        this.rate = rate;
+        this.minAmount = minAmount;
+    }
 
     public Long getId() {
         return id;
