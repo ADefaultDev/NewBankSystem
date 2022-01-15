@@ -7,7 +7,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Controller
+//@Controller
+@RestController
 @RequestMapping(path = "/BankSystem/client")
 public class ClientController {
 
@@ -24,17 +25,24 @@ public class ClientController {
         return clientService.getClients();
     }
 
-    @GetMapping(path = "/new")
-    public String  newClient(Model model){
-        model.addAttribute("client", new Client());
-        return "client/new";
+//    @GetMapping(path = "/new")
+//    public String  newClient(Model model){
+//        model.addAttribute("client", new Client());
+//        return "client/new";
+//    }
+//
+//    @PostMapping
+//    public String addClient(@ModelAttribute("client") Client client) {
+//        clientService.addNewClient(client);
+//        return "redirect:/BankSystem/client/list";
+//    }
+
+    @PostMapping
+    @ResponseBody
+    public void addClientRest(@RequestBody Client client){
+        clientService.addNewClient(client);
     }
 
-    @PostMapping()
-    public String addClient(@ModelAttribute("client") Client client) {
-        clientService.addNewClient(client);
-        return "redirect:/BankSystem/client/list";
-    }
 
     @DeleteMapping(path = "{clientId}")
     public void deleteClient(@PathVariable("clientId") Long clientId) {

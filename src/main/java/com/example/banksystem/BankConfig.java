@@ -55,15 +55,17 @@ public class BankConfig {
             Credit credit2 = new Credit(creditType2, 510000L);
             Credit credit3 = new Credit(creditType3, 2893L);
             Credit credit4 = new Credit(creditType3,32893L);
+
+            //Find client and add him credit
             jo.addCredit(credit1);
             ra.addCredit(credit2);
             ra.addCredit(credit3);
+            se.addCredit(credit4);
+            se.addCredit(credit4);
 
             //Save clients
             clientRepository.saveAll(List.of(jo,ra,se));
 
-            //Find client and add him credit
-            se.addCredit(credit4);
 
             //Create deposits
             Deposit deposit1 = new Deposit(depositType1, 1000000);

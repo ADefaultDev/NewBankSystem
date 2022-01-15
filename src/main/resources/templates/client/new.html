@@ -5,7 +5,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 </head>
 <body>
-<form th:method="POST" th:action="@{/BankSystem/bank}" th:object="${client}">
+<form th:method="POST" th:action="@{/BankSystem/client}" th:object="${client}">
     <label for="firstname">Enter Client firstname: </label>
     <input type="text" th:field="*{firstname}" id="firstname"/>
     <br/>

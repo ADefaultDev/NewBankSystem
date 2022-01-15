@@ -1,6 +1,8 @@
 package com.example.banksystem.credit;
 
 import com.example.banksystem.client.Client;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 
@@ -16,6 +18,7 @@ public class Credit {
     @Column(name = "balance", length = 15, nullable = false)
     private Long balance;
     @ManyToOne(fetch = FetchType.EAGER)
+    @JsonBackReference
     private Client client;
 
 
@@ -64,5 +67,15 @@ public class Credit {
 
     public void setClient(Client client) {
         this.client = client;
+    }
+
+    @Override
+    public String toString() {
+        return "Credit{" +
+                "id=" + id +
+                ", creditType=" + creditType +
+                ", balance=" + balance +
+                ", client=" + client +
+                '}';
     }
 }

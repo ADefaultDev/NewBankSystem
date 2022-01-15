@@ -2,6 +2,8 @@ package com.example.banksystem.client;
 
 import com.example.banksystem.credit.Credit;
 import com.example.banksystem.deposit.Deposit;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
@@ -28,10 +30,12 @@ public class Client {
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy="client", cascade = CascadeType.ALL, orphanRemoval = true)
     @Fetch(value = FetchMode.SUBSELECT)
+    @JsonManagedReference
     private List<Credit> credits = new ArrayList<>();
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy="client", cascade = CascadeType.ALL, orphanRemoval = true)
     @Fetch(value = FetchMode.SUBSELECT)
+    @JsonManagedReference
     private List<Deposit> deposits = new ArrayList<>();
 
     public Client(){

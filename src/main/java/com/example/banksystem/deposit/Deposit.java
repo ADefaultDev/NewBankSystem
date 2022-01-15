@@ -2,6 +2,7 @@ package com.example.banksystem.deposit;
 
 import com.example.banksystem.client.Client;
 import com.example.banksystem.credit.CreditType;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import javax.persistence.*;
 
@@ -17,6 +18,7 @@ public class Deposit {
     @Column(name = "balance", length = 15, nullable = false)
     private int balance;
     @ManyToOne(fetch = FetchType.EAGER)
+    @JsonBackReference
     private Client client;
 
     public Deposit(){
