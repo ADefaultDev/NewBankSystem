@@ -5,6 +5,7 @@ import com.example.banksystem.credit.CreditType;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import javax.persistence.*;
+import java.sql.SQLDataException;
 
 @Entity
 @Table(name="deposit")
@@ -25,9 +26,13 @@ public class Deposit {
 
     }
 
-    public Deposit(DepositType depositType, int balance){
+    public Deposit(DepositType depositType, int balance) throws SQLDataException{
         this.depositType = depositType;
-        this.balance = balance;
+        if(this.depositType.getMinAmount()>balance || balance>this.depositType.getMaxAmount()){
+            throw new SQLDataException("Deposit balance is invalid");
+        }else{
+            this.balance=balance;
+        }
     }
 
     public Long getId() {

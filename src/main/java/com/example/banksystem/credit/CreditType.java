@@ -18,6 +18,8 @@ public class CreditType {
     private Currency currency;
     @Column(name = "min_amount", length = 8, nullable = false)
     private int minAmount;
+    @Column(name = "max_amount", length = 8, nullable = false)
+    private int maxAmount;
     @Column(name = "repayment_time", length = 8, nullable = false)
     private int repaymentTime;
     //
@@ -25,10 +27,11 @@ public class CreditType {
 
     }
 
-    public CreditType(String name, double rate, int minAmount, int repaymentTime, Currency currency) {
+    public CreditType(String name, double rate, int minAmount, int maxAmount, int repaymentTime, Currency currency) {
         this.name = name;
         this.rate = rate;
         this.minAmount = minAmount;
+        this.maxAmount = maxAmount;
         this.repaymentTime = repaymentTime;
         this.currency = currency;
     }
@@ -65,6 +68,14 @@ public class CreditType {
         this.minAmount = minAmount;
     }
 
+    public int getMaxAmount() {
+        return maxAmount;
+    }
+
+    public void setMaxAmount(int maxAmount) {
+        this.maxAmount = maxAmount;
+    }
+
     public int getRepaymentTime() {
         return repaymentTime;
     }
@@ -89,6 +100,7 @@ public class CreditType {
                 ", rate=" + rate +
                 ", currency=" + currency +
                 ", minAmount=" + minAmount +
+                ", maxAmount=" + maxAmount +
                 ", repaymentTime=" + repaymentTime +
                 '}';
     }

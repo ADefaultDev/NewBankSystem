@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
+import java.sql.SQLClientInfoException;
+import java.sql.SQLDataException;
 
 @Entity
 @Table(name="credit")
@@ -26,15 +28,13 @@ public class Credit {
 
     }
 
-    public Credit(CreditType creditType, Long balance, Client client) {
+    public Credit(CreditType creditType, Long balance) throws SQLDataException {
         this.creditType = creditType;
-        this.balance = balance;
-        this.client = client;
-    }
-
-    public Credit(CreditType creditType, Long balance) {
-        this.creditType = creditType;
-        this.balance = balance;
+        if(this.creditType.getMinAmount()>balance || this.creditType.getMaxAmount()<balance){
+            throw new SQLDataException("Credit balance is invalid");
+        }else{
+            this.balance=balance;
+        }
     }
 
     public Long getId() {

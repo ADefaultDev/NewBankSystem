@@ -32,16 +32,16 @@ public class BankConfig {
             currencyRepository.saveAll(List.of(rubles,euros,dollars));
 
             //Create credit types
-            CreditType creditType1 = new CreditType("Выгодно", 2.5d, 10000, 10, rubles);
-            CreditType creditType2 = new CreditType("GreenCard",5.3d, 5000, 20, dollars);
-            CreditType creditType3 = new CreditType("Europe moment", 10d, 7000, 9, euros);
-            CreditType creditType4 = new CreditType("Не выгодно", 60d, 50000, 20, rubles);
+            CreditType creditType1 = new CreditType("Выгодно", 2.5d, 10000, 1000000, 10, rubles);
+            CreditType creditType2 = new CreditType("GreenCard",5.3d, 5000, 1000000, 20, dollars);
+            CreditType creditType3 = new CreditType("Europe moment", 10d, 7000, 1000000, 9, euros);
+            CreditType creditType4 = new CreditType("Не выгодно", 60d, 50000, 3000000, 20, rubles);
             creditTypeRepository.saveAll(List.of(creditType1, creditType2, creditType3, creditType4));
 
             //Create deposits types
-            DepositType depositType1 = new DepositType("Снежок", 1.2d, 300000);
-            DepositType depositType2 = new DepositType("Little deposit", 1.5d, 400000);
-            DepositType depositType3 = new DepositType("Вклад двойной", 3d, 1000000);
+            DepositType depositType1 = new DepositType("Снежок", 1.2d, 300000, 600000);
+            DepositType depositType2 = new DepositType("Little deposit", 1.5d, 400000, 8000000);
+            DepositType depositType3 = new DepositType("Вклад двойной", 3d, 1000000, 2000000);
             depositTypeRepository.saveAll(List.of(depositType1,depositType2,depositType3));
 
             //Create clients
@@ -51,10 +51,10 @@ public class BankConfig {
 
 
             //Crete credits
-            Credit credit1 = new Credit(creditType1, 40L);
+            Credit credit1 = new Credit(creditType1, 403333L);
             Credit credit2 = new Credit(creditType2, 510000L);
-            Credit credit3 = new Credit(creditType3, 2893L);
-            Credit credit4 = new Credit(creditType3,32893L);
+            Credit credit3 = new Credit(creditType3, 289333L);
+            Credit credit4 = new Credit(creditType3,62895L);
 
             //Find client and add him credit
             jo.addCredit(credit1);
@@ -68,7 +68,7 @@ public class BankConfig {
 
 
             //Create deposits
-            Deposit deposit1 = new Deposit(depositType1, 1000000);
+            Deposit deposit1 = new Deposit(depositType1, 550000);
             Deposit deposit2 = new Deposit(depositType2, 450000);
 
             ra.addDeposit(deposit1);
