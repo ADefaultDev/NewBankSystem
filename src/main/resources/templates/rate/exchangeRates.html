@@ -1,0 +1,26 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Exchange Rates</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+<h2>Exchange rate to the ruble data of the Central Bank of the Russian Federation:</h2>
+
+<form method="post" action="/BankSystem/exRates/filterCurrency">
+    <label for="search">Enter the exchange rate: </label>
+    <input type="text" name="filterCurrency" id="search" />
+    <button type="submit">Find</button>
+</form>
+<table >
+    <tr>
+        <th>Currency</th>
+        <th>Rate</th>
+    </tr>
+    <tr th:each="rate: ${exchangeRates}">
+        <td th:text="${rate.getKey()}"></td>
+        <td th:text="${rate.getValue()}"></td>
+    </tr>
+</table>
+</body>
+</html>
