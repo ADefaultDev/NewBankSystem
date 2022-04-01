@@ -13,11 +13,18 @@ import com.example.banksystem.deposit.DepositTypeRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Scanner;
 
 @Configuration
 public class BankConfig {
+
+    List<CreditType> creditTypes = new ArrayList<>();
+    List<Client> clients = new ArrayList<>();
 
     @Bean
     CommandLineRunner commandLineRunner(ClientRepository clientRepository,
@@ -25,6 +32,7 @@ public class BankConfig {
                                         DepositTypeRepository depositTypeRepository
     ){
         return args -> {
+
             //Create currency
             Currency rubles = new Currency("Ruble");
             Currency euros = new Currency("Euro");
@@ -36,7 +44,10 @@ public class BankConfig {
             CreditType creditType2 = new CreditType("GreenCard",5.3d, 5000, 1000000, 20, dollars);
             CreditType creditType3 = new CreditType("Europe moment", 10d, 7000, 1000000, 9, euros);
             CreditType creditType4 = new CreditType("Не выгодно", 60d, 50000, 3000000, 20, rubles);
-            creditTypeRepository.saveAll(List.of(creditType1, creditType2, creditType3, creditType4));
+            creditTypes.addAll(List.of(creditType1,creditType2,creditType3,creditType4));
+            creditTypeRepository.saveAll(creditTypes);
+
+            //creditTypes.addAll(creditTypeRepository.findAll());
 
             //Create deposits types
             DepositType depositType1 = new DepositType("Снежок", 1.2d, 300000, 600000);
@@ -45,12 +56,14 @@ public class BankConfig {
             depositTypeRepository.saveAll(List.of(depositType1,depositType2,depositType3));
 
             //Create clients
+            clientCreation();
             Client jo = new Client("Jo","Jonson","Bart","6561341345");
             Client ra = new Client("Ra","Aga","Abdu","1461348365");
-            Client se = new Client("Se","Va","Oleg","5411728329");
+            Client se = new Client("Se333","Vara","Oleg","5411728329");
 
 
             //Crete credits
+            creditCreation();
             Credit credit1 = new Credit(creditType1, 403333L);
             Credit credit2 = new Credit(creditType2, 510000L);
             Credit credit3 = new Credit(creditType3, 289333L);
@@ -64,7 +77,8 @@ public class BankConfig {
             se.addCredit(credit4);
 
             //Save clients
-            clientRepository.saveAll(List.of(jo,ra,se));
+            clientRepository.saveAll(clients);
+            //clientRepository.saveAll(List.of(jo,ra,se));
 
 
             //Create deposits
@@ -73,10 +87,79 @@ public class BankConfig {
 
             ra.addDeposit(deposit1);
             se.addDeposit(deposit2);
-            clientRepository.saveAll(List.of(ra,se));
+            //clientRepository.saveAll(List.of(ra,se));
 
 
 
         };
+    }
+
+    @Bean
+    void clientCreation(){
+        while(true){
+            System.out.println("Do you want to add new client?");
+            Scanner scanner = new Scanner(System.in);
+            String answer = scanner.nextLine().toLowerCase();
+            if(answer.equals("no") || answer.equals("n")){
+                break;
+            }else if(answer.equals("yes") || answer.equals("y")){
+                Client newClient = new Client();
+                System.out.print("Enter client's lastname: ");
+                newClient.setLastname(scanner.nextLine());
+                System.out.print("Enter client's firstname: ");
+                newClient.setFirstname(scanner.nextLine());
+                System.out.print("Enter client's middlename: ");
+                newClient.setMiddlename(scanner.nextLine());
+                System.out.print("Enter client's passport: ");
+                newClient.setPassport(scanner.nextLine());
+                clients.add(newClient);
+            }else{
+                System.out.println("Invalid answer");
+            }
+        }
+        System.out.println("Client creation complete");
+    }
+
+
+    void creditCreation(){
+        while (true) {
+            System.out.println("Do you want to create new credit?");
+            Scanner scanner = new Scanner(System.in);
+            String answer = scanner.nextLine().toLowerCase();
+            if (answer.equals("no") || answer.equals("n")) {
+                break;
+            } else if (answer.equals("yes") || answer.equals("y")) {
+                System.out.println("Choose the client(enter a number): ");
+                for (int i=0;i<clients.size();i++){
+                    System.out.println(i + "." + clients.get(i).toString());
+                }
+                int index = scanner.nextInt();
+                try {
+                    System.out.println("Choose your credit type: ");
+                    for (int i=0;i<creditTypes.size();i++){
+                        System.out.println(i + "." + creditTypes.get(i).toString());
+                    }
+                    int ctIndex = scanner.nextInt();
+                    try{
+                        CreditType creditType = creditTypes.get(ctIndex);
+                        System.out.println("Enter credit's balance: ");
+                        Long balance = scanner.nextLong();
+                        Credit newCredit = new Credit();
+                        newCredit.setCreditType(creditType);
+                        newCredit.setBalance(balance);
+                        newCredit.setClient(clients.get(index));
+                        clients.get(index).setCredits(List.of(newCredit));
+                    }catch (IndexOutOfBoundsException e){
+                        System.out.println("No such credit type");
+                    }
+
+                }catch (IndexOutOfBoundsException e){
+                    System.out.println("No such client");
+                }
+
+            } else {
+                System.out.println("Invalid answer");
+            }
+        }
     }
 }

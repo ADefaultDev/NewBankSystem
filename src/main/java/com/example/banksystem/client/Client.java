@@ -42,9 +42,9 @@ public class Client {
 
     }
 
-    public Client(String name, String firstname, String middlename, String passport, List<Deposit> deposits,
+    public Client(String lastname, String firstname, String middlename, String passport, List<Deposit> deposits,
                   List<Credit> credits){
-        this.lastname =name;
+        this.lastname = lastname;
         this.firstname = firstname;
         this.middlename = middlename;
         this.passport=passport;
@@ -52,8 +52,8 @@ public class Client {
         this.credits=credits;
     }
 
-    public Client(String name, String firstname, String middlename, String passport, List<Deposit> deposits){
-        this.lastname =name;
+    public Client(String lastname, String firstname, String middlename, String passport, List<Deposit> deposits){
+        this.lastname = lastname;
         this.firstname = firstname;
         this.middlename = middlename;
         this.passport=passport;
@@ -61,8 +61,8 @@ public class Client {
     }
 
 
-    public Client(String name, String firstname, String middlename, String passport){
-        this.lastname =name;
+    public Client(String lastname, String firstname, String middlename, String passport){
+        this.lastname = lastname;
         this.firstname = firstname;
         this.middlename = middlename;
         this.passport=passport;
