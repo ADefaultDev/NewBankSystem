@@ -94,14 +94,10 @@ public class CreditType {
 
     @Override
     public String toString() {
-        return "CreditType{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", rate=" + rate +
-                ", currency=" + currency +
+        return name + " " +
+                ", currency=" + currency.getDenomination() +
                 ", minAmount=" + minAmount +
                 ", maxAmount=" + maxAmount +
-                ", repaymentTime=" + repaymentTime +
-                '}';
+                ", repaymentTime=" + repaymentTime;
     }
 }

@@ -14,6 +14,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.validation.annotation.Validated;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -97,7 +98,7 @@ public class BankConfig {
     @Bean
     void clientCreation(){
         while(true){
-            System.out.println("Do you want to add new client?");
+            System.out.println("Do you want to add new client?(Y/N)");
             Scanner scanner = new Scanner(System.in);
             String answer = scanner.nextLine().toLowerCase();
             if(answer.equals("no") || answer.equals("n")){
@@ -120,10 +121,10 @@ public class BankConfig {
         System.out.println("Client creation complete");
     }
 
-
+    @Validated
     void creditCreation(){
         while (true) {
-            System.out.println("Do you want to create new credit?");
+            System.out.println("Do you want to create new credit?(Y/N)");
             Scanner scanner = new Scanner(System.in);
             String answer = scanner.nextLine().toLowerCase();
             if (answer.equals("no") || answer.equals("n")) {
@@ -131,19 +132,27 @@ public class BankConfig {
             } else if (answer.equals("yes") || answer.equals("y")) {
                 System.out.println("Choose the client(enter a number): ");
                 for (int i=0;i<clients.size();i++){
-                    System.out.println(i + "." + clients.get(i).toString());
+                    System.out.println(i + 1 + "." + clients.get(i).toString());
                 }
-                int index = scanner.nextInt();
+                int index = scanner.nextInt()-1;
                 try {
+                    Client cl = clients.get(index);
                     System.out.println("Choose your credit type: ");
                     for (int i=0;i<creditTypes.size();i++){
-                        System.out.println(i + "." + creditTypes.get(i).toString());
+                        System.out.println(i + 1 + "." + creditTypes.get(i).toString());
                     }
-                    int ctIndex = scanner.nextInt();
+
+                    int ctIndex = scanner.nextInt()-1;
                     try{
                         CreditType creditType = creditTypes.get(ctIndex);
                         System.out.println("Enter credit's balance: ");
-                        Long balance = scanner.nextLong();
+
+                        long balance=0L;
+                        try {
+                            balance = scanner.nextLong();
+                        }catch (java.util.InputMismatchException e){
+                            System.out.println("Not a number");
+                        }
                         Credit newCredit = new Credit();
                         newCredit.setCreditType(creditType);
                         newCredit.setBalance(balance);
@@ -160,6 +169,8 @@ public class BankConfig {
             } else {
                 System.out.println("Invalid answer");
             }
+
         }
+        System.out.println("Credit creation complete");
     }
 }
