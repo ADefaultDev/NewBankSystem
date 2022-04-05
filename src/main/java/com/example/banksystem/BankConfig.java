@@ -22,20 +22,17 @@ import java.util.regex.Pattern;
 
 @Configuration
 public class BankConfig {
-
-    List<CreditType> creditTypes = new ArrayList<>();
-    List<Client> clients = new ArrayList<>();
-    List<DepositType> depositTypes = new ArrayList<>();
     String passport;
 
     @Bean
     CommandLineRunner commandLineRunner(ClientRepository clientRepository,
                                         CreditTypeRepository creditTypeRepository, CurrencyRepository currencyRepository,
-                                        DepositTypeRepository depositTypeRepository
-    ){
+                                        DepositTypeRepository depositTypeRepository)
+    {
         return args -> {
+            creationInterface(clientRepository, creditTypeRepository,depositTypeRepository);
 
-            //Create currency
+            /*//Create currency
             Currency rubles = new Currency("Ruble");
             Currency euros = new Currency("Euro");
             Currency dollars = new Currency("USD");
@@ -58,7 +55,7 @@ public class BankConfig {
             depositTypes.addAll(List.of(depositType1,depositType2,depositType3));
             depositTypeRepository.saveAll(depositTypes);
 
-            creationInterface();
+            creationInterface(clientRepository);
             //Create clients
             Client jo = new Client("Jo","Jonson","Bart","6561341345");
             Client ra = new Client("Ra","Aga","Abdu","1461348365");
@@ -89,14 +86,14 @@ public class BankConfig {
 
             ra.addDeposit(deposit1);
             se.addDeposit(deposit2);
-            //clientRepository.saveAll(List.of(ra,se));
-
-
-
+            //clientRepository.saveAll(List.of(ra,se));*/
         };
     }
 
-    void creationInterface(){
+
+
+    void creationInterface(ClientRepository clientRepository, CreditTypeRepository creditTypeRepository,
+                           DepositTypeRepository depositTypeRepository){
         while(true) {
             System.out.println("Choose one option: ");
             System.out.println("1.Create a client");
@@ -106,11 +103,11 @@ public class BankConfig {
             Scanner scanner = new Scanner(System.in);
             int option = scanner.nextInt();
             if (option == 1) {
-                clientCreation();
+                clientCreation(clientRepository);
             } else if (option == 2) {
-                creditCreation();
+                creditCreation(clientRepository, creditTypeRepository);
             } else if (option == 3) {
-                depositCreation();
+                depositCreation(clientRepository, depositTypeRepository);
             } else if (option == 4) {
                 break;
             } else {
@@ -143,7 +140,7 @@ public class BankConfig {
         return name.split("")[0].toUpperCase() + name.substring(1);
     }
 
-    void clientCreation(){
+    void clientCreation(ClientRepository clientRepository){
         while(true){
             System.out.println("Do you want to add new client?(Y/N)");
             Scanner scanner = new Scanner(System.in);
@@ -160,7 +157,7 @@ public class BankConfig {
                 newClient.setMiddlename(nameEdition(scanner.nextLine()));
                 passportEnter();
                 newClient.setPassport(passport);
-                clients.add(newClient);
+                clientRepository.save(newClient);
             }else{
                 System.out.println("Invalid answer");
             }
@@ -168,7 +165,7 @@ public class BankConfig {
         System.out.println("Client creation complete");
     }
 
-    void creditCreation(){
+    void creditCreation(ClientRepository clientRepository, CreditTypeRepository creditTypeRepository){
         while (true) {
             System.out.println("Do you want to create new credit?(Y/N)");
             Scanner scanner = new Scanner(System.in);
@@ -177,32 +174,38 @@ public class BankConfig {
                 break;
             } else if (answer.equals("yes") || answer.equals("y")) {
                 System.out.println("Choose the client(enter a number): ");
-                for (int i=0;i<clients.size();i++){
-                    System.out.println(i + 1 + "." + clients.get(i).toString());
+                ArrayList<Client> clients = new ArrayList<>();
+                for (int i=0;i<clientRepository.count();i++){
+                    System.out.println(i + 1 + "." + clientRepository.findAll().get(i));
                 }
                 int index = scanner.nextInt()-1;
                 try {
-                    Client cl = clients.get(index);
+                    Client cl = clientRepository.findAll().get(index);
                     System.out.println("Choose your credit type: ");
-                    for (int i=0;i<creditTypes.size();i++){
-                        System.out.println(i + 1 + "." + creditTypes.get(i).toString());
+                    for (int i=0;i<creditTypeRepository.count();i++){
+                        System.out.println(i + 1 + "." + creditTypeRepository.findAll().get(i));
                     }
-
-                    int ctIndex = scanner.nextInt()-1;
+                    long ctIndex = scanner.nextInt()-1;
                     try{
-                        CreditType creditType = creditTypes.get(ctIndex);
+                        CreditType creditType = creditTypeRepository.getById(ctIndex);
                         System.out.println("Enter credit's balance: ");
-
                         long balance=0L;
                         try {
                             balance = scanner.nextLong();
+                            if(balance<0){
+                                throw new NumberFormatException();
+                            }
                         }catch (java.util.InputMismatchException e){
                             System.out.println("Not a number");
+                        }catch (NumberFormatException e){
+                            System.out.println("Balance must be greater than zero");
                         }
                         Credit newCredit = new Credit();
                         newCredit.setCreditType(creditType);
                         newCredit.setBalance(balance);
-                        clients.get(index).addCredit(newCredit);
+                        clientRepository.delete(cl);
+                        cl.addCredit(newCredit);
+                        clientRepository.saveAll(List.of(cl));
                     }catch (IndexOutOfBoundsException e){
                         System.out.println("No such credit type");
                     }
@@ -219,7 +222,7 @@ public class BankConfig {
         System.out.println("Credit creation complete");
     }
 
-    void depositCreation(){
+    void depositCreation(ClientRepository clientRepository, DepositTypeRepository depositTypeRepository){
         while (true) {
             System.out.println("Do you want to create new deposit?(Y/N)");
             Scanner scanner = new Scanner(System.in);
@@ -228,31 +231,37 @@ public class BankConfig {
                 break;
             } else if (answer.equals("yes") || answer.equals("y")) {
                 System.out.println("Choose the client(enter a number): ");
-                for (int i=0;i<clients.size();i++){
-                    System.out.println(i + 1 + "." + clients.get(i).toString());
+                for (int i=0;i<clientRepository.count();i++){
+                    System.out.println(i + 1 + "." + clientRepository.findAll().get(i));
                 }
                 int index = scanner.nextInt()-1;
                 try {
-                    Client cl = clients.get(index);
+                    Client cl = clientRepository.findAll().get(index);
                     System.out.println("Choose your deposit type: ");
-                    for (int i=0;i<depositTypes.size();i++){
-                        System.out.println(i + 1 + "." + depositTypes.get(i).toString());
+                    for (int i=0;i<depositTypeRepository.count();i++){
+                        System.out.println(i + 1 + "." + depositTypeRepository.findAll().get(i));
                     }
                     int dtIndex = scanner.nextInt()-1;
                     try{
-                        DepositType depositType = depositTypes.get(dtIndex);
+                        DepositType depositType = depositTypeRepository.findAll().get(dtIndex);
                         System.out.println("Enter deposit's balance: ");
-
                         long balance=0L;
                         try {
                             balance = scanner.nextLong();
+                            if(balance<0){
+                                throw new NumberFormatException();
+                            }
                         }catch (java.util.InputMismatchException e){
                             System.out.println("Not a number");
+                        }catch (NumberFormatException e){
+                            System.out.println("Balance must be greater than zero");
                         }
                         Deposit newDeposit = new Deposit();
                         newDeposit.setDepositType(depositType);
                         newDeposit.setBalance(balance);
-                        clients.get(index).addDeposit(newDeposit);
+                        clientRepository.delete(cl);
+                        cl.addDeposit(newDeposit);
+                        clientRepository.saveAll(List.of(cl));
                     }catch (IndexOutOfBoundsException e){
                         System.out.println("No such credit type");
                     }
