@@ -9,6 +9,8 @@ import org.hibernate.annotations.FetchMode;
 import org.springframework.validation.annotation.Validated;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,7 +28,8 @@ public class Client {
     private String firstname;
     @Column(name = "middlename", length = 50, nullable = false)
     private String middlename;
-    @Column(name = "passport", length = 10, nullable = false)
+    @Column(name = "passport", nullable = false)
+    @Size(min = 10, max = 10, message = "Passport must be 10 characters")
     private String passport;
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy="client", cascade = CascadeType.ALL, orphanRemoval = true)

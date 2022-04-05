@@ -17,7 +17,7 @@ public class Deposit {
     @ManyToOne(fetch = FetchType.EAGER)
     private DepositType depositType;
     @Column(name = "balance", length = 15, nullable = false)
-    private int balance;
+    private Long balance;
     @ManyToOne(fetch = FetchType.EAGER)
     @JsonBackReference
     private Client client;
@@ -26,7 +26,7 @@ public class Deposit {
 
     }
 
-    public Deposit(DepositType depositType, int balance) throws SQLDataException{
+    public Deposit(DepositType depositType, Long balance) throws SQLDataException{
         this.depositType = depositType;
         if(this.depositType.getMinAmount()>balance || balance>this.depositType.getMaxAmount()){
             throw new SQLDataException("Deposit balance is invalid");
@@ -51,11 +51,11 @@ public class Deposit {
         this.depositType = depositType;
     }
 
-    public int getBalance() {
+    public Long getBalance() {
         return balance;
     }
 
-    public void setBalance(int balance) {
+    public void setBalance(Long balance) {
         this.balance = balance;
     }
 

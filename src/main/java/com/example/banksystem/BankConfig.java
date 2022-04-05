@@ -16,16 +16,17 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.validation.annotation.Validated;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Configuration
 public class BankConfig {
 
     List<CreditType> creditTypes = new ArrayList<>();
     List<Client> clients = new ArrayList<>();
+    List<DepositType> depositTypes = new ArrayList<>();
+    String passport;
 
     @Bean
     CommandLineRunner commandLineRunner(ClientRepository clientRepository,
@@ -54,17 +55,17 @@ public class BankConfig {
             DepositType depositType1 = new DepositType("Снежок", 1.2d, 300000, 600000);
             DepositType depositType2 = new DepositType("Little deposit", 1.5d, 400000, 8000000);
             DepositType depositType3 = new DepositType("Вклад двойной", 3d, 1000000, 2000000);
-            depositTypeRepository.saveAll(List.of(depositType1,depositType2,depositType3));
+            depositTypes.addAll(List.of(depositType1,depositType2,depositType3));
+            depositTypeRepository.saveAll(depositTypes);
 
+            creationInterface();
             //Create clients
-            clientCreation();
             Client jo = new Client("Jo","Jonson","Bart","6561341345");
             Client ra = new Client("Ra","Aga","Abdu","1461348365");
             Client se = new Client("Se333","Vara","Oleg","5411728329");
 
 
             //Crete credits
-            creditCreation();
             Credit credit1 = new Credit(creditType1, 403333L);
             Credit credit2 = new Credit(creditType2, 510000L);
             Credit credit3 = new Credit(creditType3, 289333L);
@@ -83,8 +84,8 @@ public class BankConfig {
 
 
             //Create deposits
-            Deposit deposit1 = new Deposit(depositType1, 550000);
-            Deposit deposit2 = new Deposit(depositType2, 450000);
+            Deposit deposit1 = new Deposit(depositType1, 550000L);
+            Deposit deposit2 = new Deposit(depositType2, 450000L);
 
             ra.addDeposit(deposit1);
             se.addDeposit(deposit2);
@@ -95,7 +96,53 @@ public class BankConfig {
         };
     }
 
-    @Bean
+    void creationInterface(){
+        while(true) {
+            System.out.println("Choose one option: ");
+            System.out.println("1.Create a client");
+            System.out.println("2.Create a credit");
+            System.out.println("3.Create a deposit");
+            System.out.println("4.Exit");
+            Scanner scanner = new Scanner(System.in);
+            int option = scanner.nextInt();
+            if (option == 1) {
+                clientCreation();
+            } else if (option == 2) {
+                creditCreation();
+            } else if (option == 3) {
+                depositCreation();
+            } else if (option == 4) {
+                break;
+            } else {
+                System.out.println("Invalid answer");
+            }
+        }
+    }
+
+    void passportEnter(){
+        System.out.print("Enter client's passport: ");
+        Scanner sc = new Scanner(System.in);
+        passport = sc.nextLine();
+        String pattern = "[0-9]+";
+        Pattern p = Pattern.compile(pattern);
+        Matcher m = p.matcher(passport);
+        if(passport.length()!=10){
+            System.out.println("Passport must be 10 characters");
+            passportEnter();
+        }else if(!m.matches()){
+            System.out.println("Passport must contain only ten numbers");
+            passportEnter();
+        }else if(passport.split("")[0].equals("0")){
+            System.out.println("Passport mustn't start with 0");
+            passportEnter();
+        }
+    }
+
+    String nameEdition(String name){
+        name = name.toLowerCase();
+        return name.split("")[0].toUpperCase() + name.substring(1);
+    }
+
     void clientCreation(){
         while(true){
             System.out.println("Do you want to add new client?(Y/N)");
@@ -106,13 +153,13 @@ public class BankConfig {
             }else if(answer.equals("yes") || answer.equals("y")){
                 Client newClient = new Client();
                 System.out.print("Enter client's lastname: ");
-                newClient.setLastname(scanner.nextLine());
+                newClient.setLastname(nameEdition(scanner.nextLine()));
                 System.out.print("Enter client's firstname: ");
-                newClient.setFirstname(scanner.nextLine());
+                newClient.setFirstname(nameEdition(scanner.nextLine()));
                 System.out.print("Enter client's middlename: ");
-                newClient.setMiddlename(scanner.nextLine());
-                System.out.print("Enter client's passport: ");
-                newClient.setPassport(scanner.nextLine());
+                newClient.setMiddlename(nameEdition(scanner.nextLine()));
+                passportEnter();
+                newClient.setPassport(passport);
                 clients.add(newClient);
             }else{
                 System.out.println("Invalid answer");
@@ -121,7 +168,6 @@ public class BankConfig {
         System.out.println("Client creation complete");
     }
 
-    @Validated
     void creditCreation(){
         while (true) {
             System.out.println("Do you want to create new credit?(Y/N)");
@@ -156,8 +202,7 @@ public class BankConfig {
                         Credit newCredit = new Credit();
                         newCredit.setCreditType(creditType);
                         newCredit.setBalance(balance);
-                        newCredit.setClient(clients.get(index));
-                        clients.get(index).setCredits(List.of(newCredit));
+                        clients.get(index).addCredit(newCredit);
                     }catch (IndexOutOfBoundsException e){
                         System.out.println("No such credit type");
                     }
@@ -172,5 +217,55 @@ public class BankConfig {
 
         }
         System.out.println("Credit creation complete");
+    }
+
+    void depositCreation(){
+        while (true) {
+            System.out.println("Do you want to create new deposit?(Y/N)");
+            Scanner scanner = new Scanner(System.in);
+            String answer = scanner.nextLine().toLowerCase();
+            if (answer.equals("no") || answer.equals("n")) {
+                break;
+            } else if (answer.equals("yes") || answer.equals("y")) {
+                System.out.println("Choose the client(enter a number): ");
+                for (int i=0;i<clients.size();i++){
+                    System.out.println(i + 1 + "." + clients.get(i).toString());
+                }
+                int index = scanner.nextInt()-1;
+                try {
+                    Client cl = clients.get(index);
+                    System.out.println("Choose your deposit type: ");
+                    for (int i=0;i<depositTypes.size();i++){
+                        System.out.println(i + 1 + "." + depositTypes.get(i).toString());
+                    }
+                    int dtIndex = scanner.nextInt()-1;
+                    try{
+                        DepositType depositType = depositTypes.get(dtIndex);
+                        System.out.println("Enter deposit's balance: ");
+
+                        long balance=0L;
+                        try {
+                            balance = scanner.nextLong();
+                        }catch (java.util.InputMismatchException e){
+                            System.out.println("Not a number");
+                        }
+                        Deposit newDeposit = new Deposit();
+                        newDeposit.setDepositType(depositType);
+                        newDeposit.setBalance(balance);
+                        clients.get(index).addDeposit(newDeposit);
+                    }catch (IndexOutOfBoundsException e){
+                        System.out.println("No such credit type");
+                    }
+
+                }catch (IndexOutOfBoundsException e){
+                    System.out.println("No such client");
+                }
+
+            } else {
+                System.out.println("Invalid answer");
+            }
+
+        }
+        System.out.println("Deposit creation complete");
     }
 }
