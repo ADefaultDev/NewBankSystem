@@ -99,7 +99,8 @@ public class BankConfig {
             System.out.println("1.Create a client");
             System.out.println("2.Create a credit");
             System.out.println("3.Create a deposit");
-            System.out.println("4.Exit");
+            System.out.println("4.Delete a client");
+            System.out.println("5.Exit");
             Scanner scanner = new Scanner(System.in);
             int option = scanner.nextInt();
             if (option == 1) {
@@ -109,6 +110,8 @@ public class BankConfig {
             } else if (option == 3) {
                 depositCreation(clientRepository, depositTypeRepository);
             } else if (option == 4) {
+                clientDeletion(clientRepository);
+            }else if(option == 5){
                 break;
             } else {
                 System.out.println("Invalid answer");
@@ -174,7 +177,6 @@ public class BankConfig {
                 break;
             } else if (answer.equals("yes") || answer.equals("y")) {
                 System.out.println("Choose the client(enter a number): ");
-                ArrayList<Client> clients = new ArrayList<>();
                 for (int i=0;i<clientRepository.count();i++){
                     System.out.println(i + 1 + "." + clientRepository.findAll().get(i));
                 }
@@ -185,9 +187,9 @@ public class BankConfig {
                     for (int i=0;i<creditTypeRepository.count();i++){
                         System.out.println(i + 1 + "." + creditTypeRepository.findAll().get(i));
                     }
-                    long ctIndex = scanner.nextInt()-1;
+                    int ctIndex = scanner.nextInt()-1;
                     try{
-                        CreditType creditType = creditTypeRepository.getById(ctIndex);
+                        CreditType creditType = creditTypeRepository.findAll().get(ctIndex);
                         System.out.println("Enter credit's balance: ");
                         long balance=0L;
                         try {
@@ -203,7 +205,6 @@ public class BankConfig {
                         Credit newCredit = new Credit();
                         newCredit.setCreditType(creditType);
                         newCredit.setBalance(balance);
-                        clientRepository.delete(cl);
                         cl.addCredit(newCredit);
                         clientRepository.saveAll(List.of(cl));
                     }catch (IndexOutOfBoundsException e){
@@ -259,22 +260,49 @@ public class BankConfig {
                         Deposit newDeposit = new Deposit();
                         newDeposit.setDepositType(depositType);
                         newDeposit.setBalance(balance);
-                        clientRepository.delete(cl);
                         cl.addDeposit(newDeposit);
                         clientRepository.saveAll(List.of(cl));
                     }catch (IndexOutOfBoundsException e){
                         System.out.println("No such credit type");
                     }
-
                 }catch (IndexOutOfBoundsException e){
                     System.out.println("No such client");
                 }
-
             } else {
                 System.out.println("Invalid answer");
             }
-
         }
         System.out.println("Deposit creation complete");
     }
+
+    void clientDeletion(ClientRepository clientRepository){
+        while(true){
+            System.out.println("Do you want to delete client?(Y/N)");
+            Scanner scanner = new Scanner(System.in);
+            String answer = scanner.nextLine().toLowerCase();
+            if(answer.equals("no") || answer.equals("n")){
+                break;
+            }else if(answer.equals("yes") || answer.equals("y")){
+                System.out.println("Choose the client(enter a number): ");
+                if(clientRepository.count()==0){
+                    System.out.println("No clients in database");
+                }else {
+                    for (int i = 0; i < clientRepository.count(); i++) {
+                        System.out.println(i + 1 + "." + clientRepository.findAll().get(i));
+                    }
+                    int index = scanner.nextInt() - 1;
+                    try {
+                        Client client = clientRepository.findAll().get(index);
+                        clientRepository.delete(client);
+                    } catch (IndexOutOfBoundsException e) {
+                        System.out.println("No such client");
+                    }
+                }
+            }else{
+                System.out.println("Invalid answer");
+            }
+        }
+        System.out.println("Client deletion complete");
+    }
+
 }
