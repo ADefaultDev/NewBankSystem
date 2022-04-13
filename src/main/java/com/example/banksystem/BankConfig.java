@@ -139,6 +139,7 @@ public class BankConfig {
     }
 
     String nameEdition(String name){
+        name = name.replaceAll(" ", "");
         name = name.toLowerCase();
         return name.split("")[0].toUpperCase() + name.substring(1);
     }
@@ -294,6 +295,7 @@ public class BankConfig {
                     try {
                         Client client = clientRepository.findAll().get(index);
                         clientRepository.delete(client);
+                        System.out.println("Client deleted");
                     } catch (IndexOutOfBoundsException e) {
                         System.out.println("No such client");
                     }
