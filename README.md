@@ -1,3 +1,3 @@
 # BankSystem
-Banking system management
+Bank system prototype based on Spring, JPA, Hibernate and using Vaadin as GUI
 
