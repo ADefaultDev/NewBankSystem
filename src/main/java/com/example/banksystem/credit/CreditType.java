@@ -11,7 +11,7 @@ public class CreditType {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
+    @Nationalized
     @Column(name = "name", length = 40, nullable = false)
     private String name;
     @Column(name = "rate", length = 4, nullable = false)

@@ -10,6 +10,12 @@ sourceCompatibility = '11'
 
 repositories {
 	mavenCentral()
+	maven { url "https://maven.vaadin.com/vaadin-addons" }
+}
+dependencyManagement {
+	imports {
+		mavenBom 'com.vaadin:vaadin-bom:14.8.0'
+	}
 }
 
 dependencies {
@@ -19,6 +25,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5'
+	implementation 'com.vaadin:vaadin-spring-boot-starter'
 	runtimeOnly 'mysql:mysql-connector-java'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
