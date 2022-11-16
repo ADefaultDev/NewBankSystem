@@ -1,20 +1,26 @@
 plugins {
-	id 'org.springframework.boot' version '2.6.2'
-	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 	id 'java'
+	id 'org.springframework.boot' version '2.7.5'
+	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+	id 'com.vaadin' version '23.2.7'
 }
 
 group = 'com.example'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '11'
+sourceCompatibility = '17'
 
 repositories {
 	mavenCentral()
 	maven { url "https://maven.vaadin.com/vaadin-addons" }
 }
+
+ext {
+	set('vaadinVersion', "23.2.7")
+}
+
 dependencyManagement {
 	imports {
-		mavenBom 'com.vaadin:vaadin-bom:14.8.0'
+		mavenBom "com.vaadin:vaadin-bom:${vaadinVersion}"
 	}
 }
 
