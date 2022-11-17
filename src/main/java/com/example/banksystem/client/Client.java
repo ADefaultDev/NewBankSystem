@@ -147,6 +147,6 @@ public class Client {
     @Override
     public String toString() {
         return lastname + " " +
-                firstname + " " + middlename + " " + passport;
+                firstname + " " + middlename;
     }
 }

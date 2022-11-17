@@ -96,10 +96,6 @@ public class CreditType {
 
     @Override
     public String toString() {
-        return name + " " +
-                ", currency=" + currency.getDenomination() +
-                ", minAmount=" + minAmount +
-                ", maxAmount=" + maxAmount +
-                ", repaymentTime=" + repaymentTime;
+        return name;
     }
 }

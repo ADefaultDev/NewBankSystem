@@ -39,9 +39,6 @@ public class Currency {
 
     @Override
     public String toString() {
-        return "Currency{" +
-                "id=" + id +
-                ", denomination='" + denomination + '\'' +
-                '}';
+        return getDenomination();
     }
 }

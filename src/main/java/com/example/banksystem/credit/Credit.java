@@ -69,7 +69,12 @@ public class Credit {
         this.client = client;
     }
 
+
     @Override
+    public String toString(){
+        return creditType.getName();
+    }
+    /*@Override
     public String toString() {
         return "Credit{" +
                 "id=" + id +
@@ -77,5 +82,5 @@ public class Credit {
                 ", balance=" + balance +
                 ", client=" + client +
                 '}';
-    }
+    }*/
 }
