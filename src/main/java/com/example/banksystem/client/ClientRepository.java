@@ -6,10 +6,13 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface ClientRepository extends JpaRepository<Client, Long> {
+
+    List<Client> findByLastnameStartsWithIgnoreCase(String lastname);
 
     @Query("SELECT s FROM Client s WHERE s.passport = ?1")
     Optional<Client> findClientByPassport(String passport);

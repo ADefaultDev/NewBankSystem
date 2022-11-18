@@ -10,72 +10,132 @@ import com.example.banksystem.deposit.Deposit;
 import com.example.banksystem.deposit.DepositRepository;
 import com.example.banksystem.deposit.DepositType;
 import com.example.banksystem.deposit.DepositTypeRepository;
+import com.vaadin.flow.component.AbstractField;
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.value.ValueChangeMode;
+import com.vaadin.flow.internal.StringUtil;
 import com.vaadin.flow.router.Route;
-import org.aspectj.weaver.ast.Not;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.util.StringUtils;
 
-import java.util.List;
-
 @Route
 public class MainView extends VerticalLayout {
-    private final CreditRepository creditRepository;
-    private final CreditTypeRepository creditTypeRepository;
-    private final ClientRepository clientRepository;
-    private final DepositTypeRepository depositTypeRepository;
-    private final DepositRepository depositRepository;
 
-    Grid<DepositType> grid;
+    Grid<Client> clientGrid;
     Grid<Credit> creditGrid;
     Grid<CreditType> creditTypeGrid;
-    Grid<Client> clientGrid;
     Grid<DepositType> depositTypeGrid;
     Grid<Deposit> depositGrid;
+    TextField filter;
+
     public MainView(CreditTypeRepository creditTypeRepository, CreditRepository creditRepository, ClientRepository clientRepository,
                     DepositTypeRepository depositTypeRepository, DepositRepository depositRepository){
-        this.creditRepository = creditRepository;
-        this.creditTypeRepository = creditTypeRepository;
-        this.clientRepository = clientRepository;
-        this.depositTypeRepository = depositTypeRepository;
-        this.depositRepository = depositRepository;
+        clientGrid = new Grid<>(Client.class);
+        creditGrid = new Grid<>(Credit.class);
+        creditTypeGrid = new Grid<>(CreditType.class);
+        depositGrid = new Grid<>(Deposit.class);
+        depositTypeGrid = new Grid<>(DepositType.class);
+        filter = new TextField();
 
-        this.creditGrid = new Grid<>(Credit.class);
-        this.creditTypeGrid = new Grid<>(CreditType.class);
-        this.clientGrid = new Grid<>(Client.class);
-        this.depositTypeGrid = new Grid<>(DepositType.class);
-        this.depositGrid = new Grid<>(Deposit.class);
-
-
-        add(new Button("Show credits" , event -> showTable(creditGrid,creditRepository)));
-        add(new Button("Show credit types" , event -> showTable(creditTypeGrid,creditTypeRepository)));
-        add(new Button("Show clients" , event -> showTable(clientGrid,clientRepository)));
-        add(new Button("Show deposit types" , event -> showTable(depositTypeGrid,depositTypeRepository)));
-        add(new Button("Show deposits" , event -> showTable(depositGrid,depositRepository)));
-        add(new Button("Remove all" , event  -> remove()));
-
-
+        add(new Button("Show clients" , event -> showClients(clientRepository)));
+        add(new Button("Show credits" , event -> showCredits(creditRepository)));
+        add(new Button("Show credit types" , event -> showCreditTypes(creditTypeRepository)));
+        add(new Button("Show deposits" , event -> showDeposits(depositRepository)));
+        add(new Button("Show deposit types" , event -> showDepositTypes(depositTypeRepository)));
+        add(new Button("Remove all" , event  -> removeAll()));
     }
 
-    public void showTable(Grid<?> grid, JpaRepository jpaRepository){
-        this.remove(creditGrid,clientGrid,creditTypeGrid, depositTypeGrid, depositGrid);
-        add(grid);
-        grid.setItems(jpaRepository.findAll());
-
+    public void showClients(ClientRepository clientRepository){
+        removeAll();
+        buttonConfig("Filter by last name");
+        filter.addValueChangeListener(event -> clientsFiltering(event.getValue(),clientRepository));
+        clientGrid.setItems(clientRepository.findAll());
+        add(clientGrid);
     }
 
-    public void remove(){
-        this.remove(creditGrid,clientGrid, creditTypeGrid,depositGrid,depositTypeGrid);
+    public void clientsFiltering(String filterText, ClientRepository clientRepository){
+        if(StringUtils.isEmpty(filterText)){
+            clientGrid.setItems(clientRepository.findAll());
+        }else {
+            clientGrid.setItems(clientRepository.findByLastnameStartsWithIgnoreCase(filterText));
+        }
     }
-    public void showDeposits(){
-        grid.setItems(depositTypeRepository.findAll());
+
+    public void showCredits(CreditRepository creditRepository){
+        removeAll();
+        buttonConfig("Filter by last name");
+        filter.addValueChangeListener(event -> creditsFiltering(event.getValue(), creditRepository));
+        creditGrid.setItems(creditRepository.findAll());
+        add(creditGrid);
     }
 
+    public void creditsFiltering(String filterText, CreditRepository creditRepository){
+        if(StringUtils.isEmpty(filterText)){
+            creditGrid.setItems(creditRepository.findAll());
+        }else {
+            creditGrid.setItems(creditRepository.findCreditByClient(filterText));
+        }
+    }
 
+    public void showCreditTypes(CreditTypeRepository creditTypeRepository){
+        removeAll();
+        buttonConfig("");
+        filter.addValueChangeListener(event -> creditTypeFiltering(event.getValue(), creditTypeRepository));
+        creditTypeGrid.setItems(creditTypeRepository.findAll());
+        add(creditTypeGrid);
+    }
 
+    public void creditTypeFiltering(String filterText, CreditTypeRepository creditTypeRepository){
+        if(StringUtils.isEmpty(filterText)){
+            creditTypeGrid.setItems(creditTypeRepository.findAll());
+        }else {
+        }
+    }
 
+    public void showDeposits(DepositRepository depositRepository){
+        removeAll();
+        buttonConfig("");
+        filter.addValueChangeListener(event -> depositsFiltering(event.getValue(),depositRepository));
+        depositGrid.setItems(depositRepository.findAll());
+        add(depositGrid);
+    }
 
+    public void depositsFiltering(String filterText, DepositRepository depositRepository){
+        if(StringUtils.isEmpty(filterText)){
+            depositGrid.setItems(depositRepository.findAll());
+        }else {
+        }
+    }
+
+    public void showDepositTypes(DepositTypeRepository depositTypeRepository){
+        removeAll();
+        buttonConfig("");
+        filter.addValueChangeListener(event -> depositTypesFiltering(event.getValue(),depositTypeRepository));
+        depositTypeGrid.setItems(depositTypeRepository.findAll());
+        add(depositTypeGrid);
+    }
+
+    public void depositTypesFiltering(String filterText, DepositTypeRepository depositTypeRepository){
+        if(StringUtils.isEmpty(filterText)){
+            depositTypeGrid.setItems(depositTypeRepository.findAll());
+        }else {
+
+        }
+    }
+
+    public void buttonConfig(String placeholder){
+        filter.setPlaceholder(placeholder);
+        filter.setValueChangeMode(ValueChangeMode.EAGER);
+        add(filter);
+    }
+
+    public void removeAll(){
+        filter.setValue("");
+        this.remove(filter,clientGrid, creditTypeGrid, creditGrid, depositTypeGrid, depositGrid);
+
+    }
 }
