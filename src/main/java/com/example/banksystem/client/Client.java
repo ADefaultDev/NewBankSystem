@@ -42,9 +42,7 @@ public class Client {
     @JsonManagedReference
     private List<Deposit> deposits = new ArrayList<>();
 
-    public Client(){
-
-    }
+    public Client(){}
 
     public Client(String lastname, String firstname, String middlename, String passport, List<Deposit> deposits,
                   List<Credit> credits){
@@ -120,8 +118,8 @@ public class Client {
         return middlename;
     }
 
-    public void setMiddlename(String patronymic) {
-        this.middlename = patronymic;
+    public void setMiddlename(String middlename) {
+        this.middlename = middlename;
     }
 
     public String getPassport(){return passport;}

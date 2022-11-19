@@ -9,12 +9,15 @@ import com.example.banksystem.currency.CurrencyRepository;
 import com.example.banksystem.deposit.Deposit;
 import com.example.banksystem.deposit.DepositType;
 import com.example.banksystem.deposit.DepositTypeRepository;
+import com.helger.commons.state.ILeftRightIndicator;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.Scanner;
@@ -52,12 +55,14 @@ public class BankConfig {
                 //depositTypeInitialization(depositTypeRepository);
             }
 
+
             System.out.println("Choose one option: ");
             System.out.println("1.Create a client");
             System.out.println("2.Create a credit");
             System.out.println("3.Create a deposit");
             System.out.println("4.Delete a client");
             System.out.println("5.Exit");
+            System.out.println("6.Generate random data");
 
             Scanner scanner = new Scanner(System.in);
             int option = scanner.nextInt();
@@ -72,7 +77,13 @@ public class BankConfig {
             }else if(option == 5){
                 SpringApplication.exit(context);
                 break;
-            } else {
+            }else if(option == 6){
+                System.out.println("Clients generation in progress...");
+                for (int i=0;i<500;i++){
+                    Client cl = generateRandomClient();
+                    clientRepository.save(cl);
+                }
+            }else {
                 System.out.println("Invalid answer");
             }
         }
@@ -264,5 +275,25 @@ public class BankConfig {
             }
         }
         System.out.println("Client deletion complete");
+    }
+
+    Client generateRandomClient(){
+        return new Client(generateRandomName(), generateRandomName(), generateRandomName(),generateRandomPassport());
+    }
+
+    String generateRandomPassport(){
+        return generateRandomLong(1000000000L, 9999999999L).toString();
+    }
+    String generateRandomName(){
+        int count = getRandomNumber(6,25);
+        return StringUtils.capitalize(RandomStringUtils.randomAlphabetic(count).toLowerCase());
+    }
+
+    Long generateRandomLong(Long min, Long max){
+        return min  + (long)(Math.random() * (max - min));
+    }
+
+    public int getRandomNumber(int min, int max) {
+        return (int) ((Math.random() * (max - min)) + min);
     }
 }

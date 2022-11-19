@@ -35,10 +35,15 @@ public class MainView extends VerticalLayout {
     public MainView(CreditTypeRepository creditTypeRepository, CreditRepository creditRepository, ClientRepository clientRepository,
                     DepositTypeRepository depositTypeRepository, DepositRepository depositRepository){
         clientGrid = new Grid<>(Client.class);
+        clientGrid.setColumnReorderingAllowed(true);
         creditGrid = new Grid<>(Credit.class);
+        creditGrid.setColumnReorderingAllowed(true);
         creditTypeGrid = new Grid<>(CreditType.class);
+        creditTypeGrid.setColumnReorderingAllowed(true);
         depositGrid = new Grid<>(Deposit.class);
+        depositGrid.setColumnReorderingAllowed(true);
         depositTypeGrid = new Grid<>(DepositType.class);
+        depositTypeGrid.setColumnReorderingAllowed(true);
         filter = new TextField();
 
         add(new Button("Show clients" , event -> showClients(clientRepository)));
@@ -51,7 +56,7 @@ public class MainView extends VerticalLayout {
 
     public void showClients(ClientRepository clientRepository){
         removeAll();
-        buttonConfig("Filter by last name");
+        buttonConfig("Filter by name");
         filter.addValueChangeListener(event -> clientsFiltering(event.getValue(),clientRepository));
         clientGrid.setItems(clientRepository.findAll());
         add(clientGrid);
@@ -61,7 +66,8 @@ public class MainView extends VerticalLayout {
         if(StringUtils.isEmpty(filterText)){
             clientGrid.setItems(clientRepository.findAll());
         }else {
-            clientGrid.setItems(clientRepository.findByLastnameStartsWithIgnoreCase(filterText));
+            //clientGrid.setItems(clientRepository.findByLastnameStartsWithIgnoreCase(filterText));
+            clientGrid.setItems(clientRepository.findBy(filterText));
         }
     }
 
@@ -83,7 +89,7 @@ public class MainView extends VerticalLayout {
 
     public void showCreditTypes(CreditTypeRepository creditTypeRepository){
         removeAll();
-        buttonConfig("");
+        buttonConfig("Filter by last name");
         filter.addValueChangeListener(event -> creditTypeFiltering(event.getValue(), creditTypeRepository));
         creditTypeGrid.setItems(creditTypeRepository.findAll());
         add(creditTypeGrid);
@@ -93,12 +99,13 @@ public class MainView extends VerticalLayout {
         if(StringUtils.isEmpty(filterText)){
             creditTypeGrid.setItems(creditTypeRepository.findAll());
         }else {
+            creditTypeGrid.setItems(creditTypeRepository.findByNameStartsWithIgnoreCase(filterText));
         }
     }
 
     public void showDeposits(DepositRepository depositRepository){
         removeAll();
-        buttonConfig("");
+        buttonConfig("Filter by last name");
         filter.addValueChangeListener(event -> depositsFiltering(event.getValue(),depositRepository));
         depositGrid.setItems(depositRepository.findAll());
         add(depositGrid);
@@ -108,6 +115,7 @@ public class MainView extends VerticalLayout {
         if(StringUtils.isEmpty(filterText)){
             depositGrid.setItems(depositRepository.findAll());
         }else {
+            depositGrid.setItems(depositRepository.findDepositByClient(filterText));
         }
     }
 
