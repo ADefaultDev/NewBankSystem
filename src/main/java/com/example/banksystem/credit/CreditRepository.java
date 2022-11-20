@@ -10,6 +10,8 @@ import java.util.Optional;
 
 @Repository
 public interface CreditRepository extends JpaRepository<Credit, Long> {
-    @Query("SELECT c FROM Credit c WHERE c.client.lastname LIKE ?1%")
-    List<Credit> findCreditByClient(String lastname);
+
+
+    @Query("SELECT c FROM Credit c WHERE CONCAT(c.client.lastname, '',c.client.firstname,'',c.client.middlename) LIKE ?1%")
+    List<Credit> findCreditByClient(String client);
 }

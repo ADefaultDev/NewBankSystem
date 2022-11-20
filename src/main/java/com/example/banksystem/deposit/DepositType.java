@@ -13,15 +13,15 @@ public class DepositType {
     @Column(name = "rate", length = 4, nullable = false)
     private double rate;
     @Column(name = "min_amount", length = 8, nullable = false)
-    private int minAmount;
+    private Long minAmount;
     @Column(name = "max_amount", length = 8, nullable = false)
-    private int maxAmount;
+    private Long maxAmount;
 
     public DepositType(){
 
     }
 
-    public DepositType(String name, double rate, int minAmount, int maxAmount){
+    public DepositType(String name, double rate, Long minAmount, Long maxAmount){
         this.name = name;
         this.rate = rate;
         this.minAmount = minAmount;
@@ -52,31 +52,25 @@ public class DepositType {
         this.rate = rate;
     }
 
-    public int getMinAmount() {
+    public Long getMinAmount() {
         return minAmount;
     }
 
-    public void setMinAmount(int minAmount) {
+    public void setMinAmount(Long minAmount) {
         this.minAmount = minAmount;
     }
 
-    public int getMaxAmount() {
+    public Long getMaxAmount() {
         return maxAmount;
     }
 
-    public void setMaxAmount(int maxAmount) {
+    public void setMaxAmount(Long maxAmount) {
         this.maxAmount = maxAmount;
     }
 
     @Override
     public String toString() {
-        return "DepositType{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", rate=" + rate +
-                ", minAmount=" + minAmount +
-                ", maxAmount=" + maxAmount +
-                '}';
+        return name;
     }
 }
 

@@ -11,12 +11,8 @@ import java.util.Optional;
 
 @Repository
 public interface ClientRepository extends JpaRepository<Client, Long> {
-
-    //SELECT d FROM Deposit d WHERE d.client.lastname LIKE ?1%
-    //SELECT CONCAT(FirstName , " ", MiddleName, " ", LastName  )as Name from Client
-    @Query("SELECT c FROM Client c WHERE CONCAT(LastName , ' ', FirstName, ' ', MiddleName)  LIKE ?1%")
-    List<Client> findBy(String name);
-    List<Client> findByLastnameStartsWithIgnoreCase(String lastname);
+    @Query("SELECT c FROM Client c WHERE CONCAT(LastName , '', FirstName, '', MiddleName)  LIKE ?1%")
+    List<Client> findClientByName(String name);
 
     @Query("SELECT s FROM Client s WHERE s.passport = ?1")
     Optional<Client> findClientByPassport(String passport);

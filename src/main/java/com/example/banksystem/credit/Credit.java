@@ -24,16 +24,16 @@ public class Credit {
     private Client client;
 
 
-    public Credit(){
+    public Credit() {
 
     }
 
     public Credit(CreditType creditType, Long balance) throws SQLDataException {
         this.creditType = creditType;
-        if(this.creditType.getMinAmount()>balance || this.creditType.getMaxAmount()<balance){
+        if (this.creditType.getMinAmount() > balance || this.creditType.getMaxAmount() < balance) {
             throw new SQLDataException("Credit balance is invalid");
-        }else{
-            this.balance=balance;
+        } else {
+            this.balance = balance;
         }
     }
 
@@ -71,16 +71,7 @@ public class Credit {
 
 
     @Override
-    public String toString(){
+    public String toString() {
         return creditType.getName();
     }
-    /*@Override
-    public String toString() {
-        return "Credit{" +
-                "id=" + id +
-                ", creditType=" + creditType +
-                ", balance=" + balance +
-                ", client=" + client +
-                '}';
-    }*/
 }

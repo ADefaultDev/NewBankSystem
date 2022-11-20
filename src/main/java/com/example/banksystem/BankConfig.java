@@ -83,6 +83,15 @@ public class BankConfig {
                     Client cl = generateRandomClient();
                     clientRepository.save(cl);
                 }
+                System.out.println("Credits generation in progress...");
+                for (int i=0;i<50;i++){
+                    generateRandomCredit(creditTypeRepository,clientRepository);
+                }
+                System.out.println("Deposits generation in progress...");
+                for (int i=0;i<50;i++){
+                    generateRandomDeposit(depositTypeRepository,clientRepository);
+                }
+                System.out.println("Random data generation was successful");
             }else {
                 System.out.println("Invalid answer");
             }
@@ -281,6 +290,26 @@ public class BankConfig {
         return new Client(generateRandomName(), generateRandomName(), generateRandomName(),generateRandomPassport());
     }
 
+    void generateRandomCredit(CreditTypeRepository creditTypeRepository, ClientRepository clientRepository){
+        Client newClient = clientRepository.findAll().get(getRandomNumber(0,clientRepository.count()));
+        Credit newCredit = new Credit();
+        CreditType creditType = creditTypeRepository.findAll().get(getRandomNumber(0,creditTypeRepository.count()));
+        newCredit.setCreditType(creditType);
+        newCredit.setBalance(generateRandomLong(creditType.getMinAmount(), creditType.getMaxAmount()));
+        newClient.addCredit(newCredit);
+        clientRepository.save(newClient);
+    }
+
+    void generateRandomDeposit(DepositTypeRepository depositTypeRepository, ClientRepository clientRepository){
+        Client newClient = clientRepository.findAll().get(getRandomNumber(0, clientRepository.count()));
+        Deposit newDeposit = new Deposit();
+        DepositType depositType = depositTypeRepository.findAll().get(getRandomNumber(0,depositTypeRepository.count()));
+        newDeposit.setDepositType(depositType);
+        newDeposit.setBalance(generateRandomLong(depositType.getMinAmount(), depositType.getMaxAmount()));
+        newClient.addDeposit(newDeposit);
+        clientRepository.save(newClient);
+    }
+
     String generateRandomPassport(){
         return generateRandomLong(1000000000L, 9999999999L).toString();
     }
@@ -293,6 +322,8 @@ public class BankConfig {
         return min  + (long)(Math.random() * (max - min));
     }
 
+
+    public int getRandomNumber(int min, long max){return (int) ((Math.random() * (max - min)) + min);}
     public int getRandomNumber(int min, int max) {
         return (int) ((Math.random() * (max - min)) + min);
     }

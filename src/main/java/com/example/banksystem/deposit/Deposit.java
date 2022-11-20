@@ -69,12 +69,7 @@ public class Deposit {
 
     @Override
     public String toString() {
-        return "Deposit{" +
-                "id=" + id +
-                ", depositType=" + depositType +
-                ", balance=" + balance +
-                ", clientId=" + client +
-                '}';
+        return depositType.getName();
     }
 }
 
