@@ -161,7 +161,7 @@ public class MainView extends VerticalLayout {
 
     public void removeAll(){
         filter.setValue("");
-        this.remove(filter,clientGrid, creditTypeGrid, creditGrid, depositTypeGrid, depositGrid, addNewBtn);
+        this.remove(filter,clientGrid, creditTypeGrid, creditGrid, depositTypeGrid, depositGrid, actions);
 
     }
 }

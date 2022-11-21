@@ -37,13 +37,10 @@ public class ClientEditor extends VerticalLayout implements KeyNotifier {
     @Autowired
     public ClientEditor(ClientRepository repository) {
         this.repository = repository;
-
         add(lastName, firstName, middleName, passport, actions);
 
-        // bind using naming convention
         binder.bindInstanceFields(this);
 
-        // Configure and style components
         setSpacing(true);
 
         save.getElement().getThemeList().add("primary");
@@ -53,7 +50,7 @@ public class ClientEditor extends VerticalLayout implements KeyNotifier {
 
         save.addClickListener(e -> save());
         delete.addClickListener(e -> delete());
-        cancel.addClickListener(e -> editClient(client));
+        cancel.addClickListener(e -> cancel());
         setVisible(false);
     }
 
@@ -67,38 +64,36 @@ public class ClientEditor extends VerticalLayout implements KeyNotifier {
         changeHandler.onChange();
     }
 
+    void cancel(){
+        changeHandler.onChange();
+    }
+
     public interface ChangeHandler {
         void onChange();
     }
 
-    public final void editClient(Client c) {
-        if (c == null) {
+    public final void editClient(Client client) {
+        if (client == null) {
             setVisible(false);
             return;
         }
-        final boolean persisted = c.getId() != null;
+        final boolean persisted = client.getId() != null;
         if (persisted) {
-            client = repository.findById(c.getId()).get();
+            this.client = repository.findById(client.getId()).get();
         }
         else {
-            client = c;
+            this.client = client;
         }
         cancel.setVisible(persisted);
 
-        // Bind customer properties to similarly named fields
-        // Could also use annotation or "manual binding" or programmatically
-        // moving values from fields to entities before saving
-        binder.setBean(client);
+        binder.setBean(this.client);
 
         setVisible(true);
-
         lastName.focus();
     }
 
-    public void setChangeHandler(ChangeHandler h) {
-        // ChangeHandler is notified when either save or delete
-        // is clicked
-        changeHandler = h;
+    public void setChangeHandler(ChangeHandler changeHandler) {
+        this.changeHandler = changeHandler;
     }
 
 }
