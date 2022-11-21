@@ -10,20 +10,20 @@ import com.example.banksystem.deposit.Deposit;
 import com.example.banksystem.deposit.DepositRepository;
 import com.example.banksystem.deposit.DepositType;
 import com.example.banksystem.deposit.DepositTypeRepository;
-import com.vaadin.flow.component.AbstractField;
-import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.value.ValueChangeMode;
-import com.vaadin.flow.internal.StringUtil;
 import com.vaadin.flow.router.Route;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.util.StringUtils;
 
 @Route
 public class MainView extends VerticalLayout {
+
+    private final ClientEditor clientEditor;
 
     Grid<Client> clientGrid;
     Grid<Credit> creditGrid;
@@ -31,9 +31,14 @@ public class MainView extends VerticalLayout {
     Grid<DepositType> depositTypeGrid;
     Grid<Deposit> depositGrid;
     TextField filter;
+    private final Button addNewBtn;
+
+    private HorizontalLayout actions;
 
     public MainView(CreditTypeRepository creditTypeRepository, CreditRepository creditRepository, ClientRepository clientRepository,
-                    DepositTypeRepository depositTypeRepository, DepositRepository depositRepository){
+                    DepositTypeRepository depositTypeRepository, DepositRepository depositRepository, ClientEditor clientEditor){
+        this.clientEditor = clientEditor;
+
         clientGrid = new Grid<>(Client.class);
         clientGrid.setColumnReorderingAllowed(true);
         creditGrid = new Grid<>(Credit.class);
@@ -45,6 +50,10 @@ public class MainView extends VerticalLayout {
         depositTypeGrid = new Grid<>(DepositType.class);
         depositTypeGrid.setColumnReorderingAllowed(true);
         filter = new TextField();
+        this.addNewBtn = new Button("New client", VaadinIcon.PLUS.create());
+
+        actions = new HorizontalLayout(addNewBtn);
+
 
         add(new Button("Show clients" , event -> showClients(clientRepository)));
         add(new Button("Show credits" , event -> showCredits(creditRepository)));
@@ -59,7 +68,17 @@ public class MainView extends VerticalLayout {
         buttonConfig("Filter by name");
         filter.addValueChangeListener(event -> clientsFiltering(event.getValue(),clientRepository));
         clientGrid.setItems(clientRepository.findAll());
-        add(clientGrid);
+        add(actions, clientGrid, clientEditor);
+
+        clientGrid.asSingleSelect().addValueChangeListener(e -> {
+            clientEditor.editClient(e.getValue());
+        });
+        addNewBtn.addClickListener(e -> clientEditor.editClient(new Client("", "", "", "")));
+        clientEditor.setChangeHandler(() -> {
+            clientEditor.setVisible(false);
+            clientsFiltering(filter.getValue(),clientRepository);
+        });
+
     }
 
     public void clientsFiltering(String filterText, ClientRepository clientRepository){
@@ -142,7 +161,7 @@ public class MainView extends VerticalLayout {
 
     public void removeAll(){
         filter.setValue("");
-        this.remove(filter,clientGrid, creditTypeGrid, creditGrid, depositTypeGrid, depositGrid);
+        this.remove(filter,clientGrid, creditTypeGrid, creditGrid, depositTypeGrid, depositGrid, addNewBtn);
 
     }
 }
