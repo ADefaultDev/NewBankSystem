@@ -31,7 +31,7 @@ public class MainView extends VerticalLayout {
     Grid<DepositType> depositTypeGrid;
     Grid<Deposit> depositGrid;
     TextField filter;
-    private final Button addNewBtn;
+    private final Button addNewClientBtn;
 
     private HorizontalLayout actions;
 
@@ -50,9 +50,9 @@ public class MainView extends VerticalLayout {
         depositTypeGrid = new Grid<>(DepositType.class);
         depositTypeGrid.setColumnReorderingAllowed(true);
         filter = new TextField();
-        this.addNewBtn = new Button("New client", VaadinIcon.PLUS.create());
+        this.addNewClientBtn = new Button("New client", VaadinIcon.PLUS.create());
 
-        actions = new HorizontalLayout(addNewBtn);
+        actions = new HorizontalLayout(addNewClientBtn);
 
 
         add(new Button("Show clients" , event -> showClients(clientRepository)));
@@ -70,10 +70,14 @@ public class MainView extends VerticalLayout {
         clientGrid.setItems(clientRepository.findAll());
         add(actions, clientGrid, clientEditor);
 
+        //Open editor from ClientEditor.class with clicking on client grid
         clientGrid.asSingleSelect().addValueChangeListener(e -> {
             clientEditor.editClient(e.getValue());
         });
-        addNewBtn.addClickListener(e -> clientEditor.editClient(new Client("", "", "", "")));
+        //AddNewClientBtn activating editClient function from Editor if clicked
+        addNewClientBtn.addClickListener(e -> clientEditor.editClient(new Client("", "", "", "")));
+
+        //After using editor, changeHandler will remove it and set refreshed data to grid
         clientEditor.setChangeHandler(() -> {
             clientEditor.setVisible(false);
             clientsFiltering(filter.getValue(),clientRepository);

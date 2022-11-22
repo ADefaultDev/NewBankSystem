@@ -14,8 +14,11 @@ import com.vaadin.flow.spring.annotation.SpringComponent;
 import com.vaadin.flow.spring.annotation.UIScope;
 import org.springframework.beans.factory.annotation.Autowired;
 
+
+//TODO Abstract Editor for client, credits, deposits entities
 @SpringComponent
 @UIScope
+
 public class ClientEditor extends VerticalLayout implements KeyNotifier {
 
     private final ClientRepository repository;
@@ -38,15 +41,14 @@ public class ClientEditor extends VerticalLayout implements KeyNotifier {
     public ClientEditor(ClientRepository repository) {
         this.repository = repository;
         add(lastName, firstName, middleName, passport, actions);
-
+        //Bind the fields above to Object in ORM
         binder.bindInstanceFields(this);
-
-        setSpacing(true);
 
         save.getElement().getThemeList().add("primary");
         delete.getElement().getThemeList().add("error");
 
         addKeyPressListener(Key.ENTER, e -> save());
+        addKeyPressListener(Key.ESCAPE, e -> cancel());
 
         save.addClickListener(e -> save());
         delete.addClickListener(e -> delete());
@@ -77,6 +79,8 @@ public class ClientEditor extends VerticalLayout implements KeyNotifier {
             setVisible(false);
             return;
         }
+        //If client already exists in repository, edit
+        //Else: effectively creating new client
         final boolean persisted = client.getId() != null;
         if (persisted) {
             this.client = repository.findById(client.getId()).get();
