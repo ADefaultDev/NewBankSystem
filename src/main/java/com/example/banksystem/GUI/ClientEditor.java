@@ -2,6 +2,7 @@ package com.example.banksystem.GUI;
 
 import com.example.banksystem.client.Client;
 import com.example.banksystem.client.ClientRepository;
+import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.KeyNotifier;
 import com.vaadin.flow.component.button.Button;
@@ -24,10 +25,10 @@ public class ClientEditor extends VerticalLayout implements KeyNotifier {
     private final ClientRepository repository;
 
     private Client client;
-    TextField lastName = new TextField("Last name");
-    TextField firstName = new TextField("First name");
-    TextField middleName = new TextField("Middle name");
-    TextField passport = new TextField("Passport");
+    TextField lastNameField = new TextField("Last name");
+    TextField firstNameField = new TextField("First name");
+    TextField middleNameField = new TextField("Middle name");
+    TextField passportField = new TextField("Passport");
 
     Button save = new Button("Save", VaadinIcon.CHECK.create());
     Button cancel = new Button("Cancel");
@@ -40,7 +41,7 @@ public class ClientEditor extends VerticalLayout implements KeyNotifier {
     @Autowired
     public ClientEditor(ClientRepository repository) {
         this.repository = repository;
-        add(lastName, firstName, middleName, passport, actions);
+        add(lastNameField, firstNameField, middleNameField, passportField, actions);
         //Bind the fields above to Object in ORM
         binder.bindInstanceFields(this);
 
@@ -49,6 +50,8 @@ public class ClientEditor extends VerticalLayout implements KeyNotifier {
 
         addKeyPressListener(Key.ENTER, e -> save());
         addKeyPressListener(Key.ESCAPE, e -> cancel());
+
+        passportField.setMaxLength(10);
 
         save.addClickListener(e -> save());
         delete.addClickListener(e -> delete());
@@ -62,8 +65,11 @@ public class ClientEditor extends VerticalLayout implements KeyNotifier {
     }
 
     void save() {
-        repository.save(client);
-        changeHandler.onChange();
+        if (passportField.getValue().length()==10) {
+            repository.save(client);
+            changeHandler.onChange();
+        }
+
     }
 
     void cancel(){
@@ -88,12 +94,17 @@ public class ClientEditor extends VerticalLayout implements KeyNotifier {
         else {
             this.client = client;
         }
-        cancel.setVisible(persisted);
-
         binder.setBean(this.client);
-
+        passportField.addValueChangeListener(this::valueChange);
+        binder.forField(passportField).withValidator(passportField -> passportField.length() == 10,
+                "Passport must contain 10 numbers").bind(Client::getPassport,Client::setPassport);
         setVisible(true);
-        lastName.focus();
+        lastNameField.focus();
+    }
+
+    private void valueChange(HasValue.ValueChangeEvent<String> e) {
+        binder.validate();
+
     }
 
     public void setChangeHandler(ChangeHandler changeHandler) {

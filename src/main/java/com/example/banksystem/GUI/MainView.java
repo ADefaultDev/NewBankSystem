@@ -31,7 +31,7 @@ public class MainView extends VerticalLayout {
     Grid<DepositType> depositTypeGrid;
     Grid<Deposit> depositGrid;
     TextField filter;
-    private final Button addNewClientBtn;
+    private final Button addNewClientBtn, addNewCreditBtn;
 
     private HorizontalLayout actions;
 
@@ -50,9 +50,11 @@ public class MainView extends VerticalLayout {
         depositTypeGrid = new Grid<>(DepositType.class);
         depositTypeGrid.setColumnReorderingAllowed(true);
         filter = new TextField();
-        this.addNewClientBtn = new Button("New client", VaadinIcon.PLUS.create());
 
-        actions = new HorizontalLayout(addNewClientBtn);
+        this.addNewClientBtn = new Button("New client", VaadinIcon.PLUS.create());
+        this.addNewCreditBtn = new Button("New credit", VaadinIcon.PLUS.create());
+
+        //actions = new HorizontalLayout(addNewClientBtn);
 
 
         add(new Button("Show clients" , event -> showClients(clientRepository)));
@@ -68,9 +70,9 @@ public class MainView extends VerticalLayout {
         buttonConfig("Filter by name");
         filter.addValueChangeListener(event -> clientsFiltering(event.getValue(),clientRepository));
         clientGrid.setItems(clientRepository.findAll());
-        add(actions, clientGrid, clientEditor);
+        add(addNewClientBtn, clientGrid, clientEditor);
 
-        //Open editor from ClientEditor.class with clicking on client grid
+        //Open editor from ClientEditor.class when clicking on client grid
         clientGrid.asSingleSelect().addValueChangeListener(e -> {
             clientEditor.editClient(e.getValue());
         });
@@ -165,7 +167,7 @@ public class MainView extends VerticalLayout {
 
     public void removeAll(){
         filter.setValue("");
-        this.remove(filter,clientGrid, creditTypeGrid, creditGrid, depositTypeGrid, depositGrid, actions);
+        this.remove(filter,clientGrid, creditTypeGrid, creditGrid, depositTypeGrid, depositGrid);
 
     }
 }
