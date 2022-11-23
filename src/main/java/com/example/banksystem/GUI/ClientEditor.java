@@ -6,14 +6,18 @@ import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.KeyNotifier;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
+import com.vaadin.flow.data.validator.EmailValidator;
+import com.vaadin.flow.data.validator.RegexpValidator;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 import com.vaadin.flow.spring.annotation.UIScope;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 
 
 //TODO Abstract Editor for client, credits, deposits entities
@@ -25,9 +29,9 @@ public class ClientEditor extends VerticalLayout implements KeyNotifier {
     private final ClientRepository repository;
 
     private Client client;
-    TextField lastNameField = new TextField("Last name");
-    TextField firstNameField = new TextField("First name");
-    TextField middleNameField = new TextField("Middle name");
+    TextField lastName = new TextField("Last name");
+    TextField firstName = new TextField("First name");
+    TextField middleName = new TextField("Middle name");
     TextField passportField = new TextField("Passport");
 
     Button save = new Button("Save", VaadinIcon.CHECK.create());
@@ -41,7 +45,7 @@ public class ClientEditor extends VerticalLayout implements KeyNotifier {
     @Autowired
     public ClientEditor(ClientRepository repository) {
         this.repository = repository;
-        add(lastNameField, firstNameField, middleNameField, passportField, actions);
+        add(lastName, firstName, middleName, passportField, actions);
         //Bind the fields above to Object in ORM
         binder.bindInstanceFields(this);
 
@@ -65,7 +69,12 @@ public class ClientEditor extends VerticalLayout implements KeyNotifier {
     }
 
     void save() {
-        if (passportField.getValue().length()==10) {
+        if (passportField.getValue().length()==10
+                && !passportField.getValue().startsWith("0")
+                && passportField.getValue().matches("[0-9]+")
+                && lastName.getValue().chars().allMatch(Character::isLetter)
+                && firstName.getValue().chars().allMatch(Character::isLetter)
+                && middleName.getValue().chars().allMatch(Character::isLetter))  {
             repository.save(client);
             changeHandler.onChange();
         }
@@ -96,15 +105,35 @@ public class ClientEditor extends VerticalLayout implements KeyNotifier {
         }
         binder.setBean(this.client);
         passportField.addValueChangeListener(this::valueChange);
-        binder.forField(passportField).withValidator(passportField -> passportField.length() == 10,
-                "Passport must contain 10 numbers").bind(Client::getPassport,Client::setPassport);
+        binder.forField(passportField)
+                .withValidator(passportField -> !passportField.startsWith("0"),"Passport mustn't start with 0")
+                .withValidator(passportField -> passportField.length() == 10, "Passport must contain 10 numbers")
+                .withValidator(new RegexpValidator("Passport must contain only numbers","\\d*"))
+                .bind(Client::getPassport,Client::setPassport);
+
+        lastName.addValueChangeListener(this::valueChange);
+        binder.forField(lastName)
+                        .withValidator(lastName -> lastName.chars().allMatch(Character::isLetter),"Last name must contain only letters")
+                        .bind(Client::getLastname, Client::setLastname);
+
+        firstName.addValueChangeListener(this::valueChange);
+        binder.forField(firstName)
+                .withValidator(firstName -> firstName.chars().allMatch(Character::isLetter),"First name must contain only letters")
+                .bind(Client::getFirstname, Client::setFirstname);
+
+        middleName.addValueChangeListener(this::valueChange);
+        binder.forField(middleName)
+                .withValidator(middleName -> middleName.chars().allMatch(Character::isLetter),"Last name must contain only letters")
+                .bind(Client::getMiddlename, Client::setMiddlename);
+
         setVisible(true);
-        lastNameField.focus();
+        lastName.focus();
+
+
     }
 
     private void valueChange(HasValue.ValueChangeEvent<String> e) {
         binder.validate();
-
     }
 
     public void setChangeHandler(ChangeHandler changeHandler) {

@@ -10,6 +10,8 @@ import com.example.banksystem.deposit.Deposit;
 import com.example.banksystem.deposit.DepositRepository;
 import com.example.banksystem.deposit.DepositType;
 import com.example.banksystem.deposit.DepositTypeRepository;
+import com.vaadin.flow.component.Key;
+import com.vaadin.flow.component.KeyNotifier;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.icon.VaadinIcon;
@@ -21,7 +23,7 @@ import com.vaadin.flow.router.Route;
 import org.springframework.util.StringUtils;
 
 @Route
-public class MainView extends VerticalLayout {
+public class MainView extends VerticalLayout{
 
     private final ClientEditor clientEditor;
 
