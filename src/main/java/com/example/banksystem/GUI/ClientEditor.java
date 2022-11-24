@@ -27,7 +27,7 @@ import org.springframework.util.StringUtils;
 
 public class ClientEditor extends Editor {
 
-    ClientRepository repository;
+
     private Client client;
     TextField lastName = new TextField("Last name");
     TextField firstName = new TextField("First name");
@@ -40,16 +40,9 @@ public class ClientEditor extends Editor {
     @Autowired
     public ClientEditor(ClientRepository repository) {
         super(repository);
-        this.repository=repository;
         add(lastName, firstName, middleName, passportField, actions);
 
         binder.bindInstanceFields(this);
-
-        save.getElement().getThemeList().add("primary");
-        delete.getElement().getThemeList().add("error");
-
-        addKeyPressListener(Key.ENTER, e -> save());
-        addKeyPressListener(Key.ESCAPE, e -> cancel());
 
         passportField.setMaxLength(10);
 
@@ -61,15 +54,20 @@ public class ClientEditor extends Editor {
     }
 
     void save() {
+        binder.validate();
         if (passportField.getValue().length()==10
                 && !passportField.getValue().startsWith("0")
                 && passportField.getValue().matches("[0-9]+")
                 && lastName.getValue().chars().allMatch(Character::isLetter)
                 && firstName.getValue().chars().allMatch(Character::isLetter)
-                && middleName.getValue().chars().allMatch(Character::isLetter))  {
+                && middleName.getValue().chars().allMatch(Character::isLetter)
+                && lastName.getValue().length()>0
+                && firstName.getValue().length() > 0
+                && middleName.getValue().length()>0) {
             repository.save(client);
             changeHandler.onChange();
         }
+
 
     }
 
@@ -106,16 +104,19 @@ public class ClientEditor extends Editor {
         lastName.addValueChangeListener(this::valueChange);
         binder.forField(lastName)
                         .withValidator(lastName -> lastName.chars().allMatch(Character::isLetter),"Last name must contain only letters")
+                        .withValidator(lastName-> lastName.length() > 0,"Last name must contain at least one letter")
                         .bind(Client::getLastname, Client::setLastname);
 
         firstName.addValueChangeListener(this::valueChange);
         binder.forField(firstName)
                 .withValidator(firstName -> firstName.chars().allMatch(Character::isLetter),"First name must contain only letters")
+                .withValidator(firstName -> firstName.length() > 0,"First name must contain at least one letter")
                 .bind(Client::getFirstname, Client::setFirstname);
 
         middleName.addValueChangeListener(this::valueChange);
         binder.forField(middleName)
                 .withValidator(middleName -> middleName.chars().allMatch(Character::isLetter),"Last name must contain only letters")
+                .withValidator(middleName -> middleName.length() > 0,"Last name must contain at least one letter")
                 .bind(Client::getMiddlename, Client::setMiddlename);
 
         setVisible(true);
