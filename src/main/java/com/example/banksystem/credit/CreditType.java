@@ -16,7 +16,7 @@ public class CreditType {
     private String name;
     @Column(name = "rate", length = 4, nullable = false)
     private double rate;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     private Currency currency;
     @Column(name = "min_amount", length = 8, nullable = false)
     private Long minAmount;

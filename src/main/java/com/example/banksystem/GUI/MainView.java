@@ -22,10 +22,13 @@ import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.Route;
 import org.springframework.util.StringUtils;
 
+import java.sql.SQLDataException;
+
 @Route
 public class MainView extends VerticalLayout{
 
     private final ClientEditor clientEditor;
+    private final CreditEditor creditEditor;
 
     Grid<Client> clientGrid;
     Grid<Credit> creditGrid;
@@ -35,11 +38,11 @@ public class MainView extends VerticalLayout{
     TextField filter;
     private final Button addNewClientBtn, addNewCreditBtn;
 
-    private HorizontalLayout actions;
 
     public MainView(CreditTypeRepository creditTypeRepository, CreditRepository creditRepository, ClientRepository clientRepository,
-                    DepositTypeRepository depositTypeRepository, DepositRepository depositRepository, ClientEditor clientEditor){
+                    DepositTypeRepository depositTypeRepository, DepositRepository depositRepository, ClientEditor clientEditor, CreditEditor creditEditor){
         this.clientEditor = clientEditor;
+        this.creditEditor = creditEditor;
 
         clientGrid = new Grid<>(Client.class);
         clientGrid.setColumnReorderingAllowed(true);
@@ -56,11 +59,10 @@ public class MainView extends VerticalLayout{
         this.addNewClientBtn = new Button("New client", VaadinIcon.PLUS.create());
         this.addNewCreditBtn = new Button("New credit", VaadinIcon.PLUS.create());
 
-        //actions = new HorizontalLayout(addNewClientBtn);
 
 
         add(new Button("Show clients" , event -> showClients(clientRepository)));
-        add(new Button("Show credits" , event -> showCredits(creditRepository)));
+        add(new Button("Show credits" , event -> showCredits(creditRepository,creditTypeRepository)));
         add(new Button("Show credit types" , event -> showCreditTypes(creditTypeRepository)));
         add(new Button("Show deposits" , event -> showDeposits(depositRepository)));
         add(new Button("Show deposit types" , event -> showDepositTypes(depositTypeRepository)));
@@ -97,12 +99,33 @@ public class MainView extends VerticalLayout{
         }
     }
 
-    public void showCredits(CreditRepository creditRepository){
+    public void showCredits(CreditRepository creditRepository, CreditTypeRepository creditTypeRepository){
         removeAll();
         buttonConfig("Filter by client name");
         filter.addValueChangeListener(event -> creditsFiltering(event.getValue(), creditRepository));
         creditGrid.setItems(creditRepository.findAll());
-        add(creditGrid);
+        add(addNewCreditBtn, creditGrid,creditEditor);
+
+
+        creditGrid.asSingleSelect().addValueChangeListener(e -> {
+            creditEditor.editCredit(e.getValue());
+        });
+
+
+        addNewCreditBtn.addClickListener(e -> {
+            try {
+                creditEditor.editCredit(new Credit(creditTypeRepository.getReferenceById(1L),0L));
+            } catch (SQLDataException ex) {
+                throw new RuntimeException(ex);
+            }
+        });
+
+
+        creditEditor.setChangeHandler(() -> {
+            creditEditor.setVisible(false);
+            creditsFiltering(filter.getValue(),creditRepository);
+        });
+
     }
 
     public void creditsFiltering(String filterText, CreditRepository creditRepository){
@@ -169,7 +192,8 @@ public class MainView extends VerticalLayout{
 
     public void removeAll(){
         filter.setValue("");
-        this.remove(filter,clientGrid, creditTypeGrid, creditGrid, depositTypeGrid, depositGrid);
+        this.remove(filter,clientGrid, creditTypeGrid, creditGrid, depositTypeGrid, depositGrid, addNewClientBtn,addNewCreditBtn);
+
 
     }
 }
