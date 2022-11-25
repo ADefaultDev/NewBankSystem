@@ -2,10 +2,8 @@ package com.example.banksystem.credit;
 
 import com.example.banksystem.client.Client;
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
-import java.sql.SQLClientInfoException;
 import java.sql.SQLDataException;
 
 @Entity
@@ -30,11 +28,8 @@ public class Credit {
 
     public Credit(CreditType creditType, Long balance) throws SQLDataException {
         this.creditType = creditType;
-        if (this.creditType.getMinAmount() > balance || this.creditType.getMaxAmount() < balance) {
-            throw new SQLDataException("Credit balance is invalid");
-        } else {
-            this.balance = balance;
-        }
+        this.balance = balance;
+
     }
 
     public Long getId() {
