@@ -2,32 +2,18 @@ package com.example.banksystem.GUI;
 
 import com.example.banksystem.client.Client;
 import com.example.banksystem.client.ClientRepository;
-import com.vaadin.flow.component.HasValue;
-import com.vaadin.flow.component.Key;
-import com.vaadin.flow.component.KeyNotifier;
-import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.html.Label;
-import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
-import com.vaadin.flow.data.validator.EmailValidator;
 import com.vaadin.flow.data.validator.RegexpValidator;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 import com.vaadin.flow.spring.annotation.UIScope;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.util.StringUtils;
 
 
-//TODO Abstract Editor for client, credits, deposits entities
 @SpringComponent
 @UIScope
-
+@SuppressWarnings("unchecked")
 public class ClientEditor extends Editor {
-
-
     private Client client;
     TextField lastName = new TextField("Last name");
     TextField firstName = new TextField("First name");
@@ -35,7 +21,6 @@ public class ClientEditor extends Editor {
     TextField passportField = new TextField("Passport");
 
     Binder<Client> binder = new Binder<>(Client.class);
-    private ChangeHandler changeHandler;
 
     @Autowired
     public ClientEditor(ClientRepository repository) {
@@ -47,36 +32,28 @@ public class ClientEditor extends Editor {
         passportField.setMaxLength(10);
 
     }
-
+    @Override
     void delete() {
         repository.delete(client);
         changeHandler.onChange();
     }
-
+    @Override
     void save() {
         binder.validate();
-        if (passportField.getValue().length()==10
+        if (passportField.getValue().length() == 10
                 && !passportField.getValue().startsWith("0")
                 && passportField.getValue().matches("[0-9]+")
                 && lastName.getValue().chars().allMatch(Character::isLetter)
                 && firstName.getValue().chars().allMatch(Character::isLetter)
                 && middleName.getValue().chars().allMatch(Character::isLetter)
-                && lastName.getValue().length()>0
+                && lastName.getValue().length() > 0
                 && firstName.getValue().length() > 0
-                && middleName.getValue().length()>0) {
+                && middleName.getValue().length() > 0) {
             repository.save(client);
             changeHandler.onChange();
         }
 
 
-    }
-
-    void cancel(){
-        changeHandler.onChange();
-    }
-
-    public interface ChangeHandler {
-        void onChange();
     }
 
     public final void editClient(Client client) {
@@ -88,7 +65,7 @@ public class ClientEditor extends Editor {
         //Else: effectively creating new client
         final boolean persisted = client.getId() != null;
         if (persisted) {
-            this.client = (Client) repository.findById(client.getId()).get();
+            this.client = (Client) repository.findById(client.getId()).orElse(null);
         }
         else {
             this.client = client;
@@ -125,12 +102,5 @@ public class ClientEditor extends Editor {
 
     }
 
-    private void valueChange(HasValue.ValueChangeEvent<String> e) {
-        binder.validate();
-    }
-
-    public void setChangeHandler(ChangeHandler changeHandler) {
-        this.changeHandler = changeHandler;
-    }
 
 }
