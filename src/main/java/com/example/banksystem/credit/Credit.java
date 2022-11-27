@@ -69,4 +69,5 @@ public class Credit {
     public String toString() {
         return creditType.getName();
     }
+
 }

@@ -108,13 +108,14 @@ public class MainView extends VerticalLayout{
 
 
         creditGrid.asSingleSelect().addValueChangeListener(e -> {
-            creditEditor.editCredit(e.getValue());
+            System.out.println(e.getValue());
+            creditEditor.editCredit(e.getValue(),creditTypeRepository);
         });
 
 
         addNewCreditBtn.addClickListener(e -> {
             try {
-                creditEditor.editCredit(new Credit(creditTypeRepository.getReferenceById(1L),0L));
+                creditEditor.editCredit(new Credit(creditTypeRepository.getReferenceById(1L),0L),creditTypeRepository);
             } catch (SQLDataException ex) {
                 throw new RuntimeException(ex);
             }
