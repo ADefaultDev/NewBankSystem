@@ -20,16 +20,16 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.Route;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.sql.SQLDataException;
 
 @Route
+@Transactional
 public class MainView extends VerticalLayout{
 
     private final ClientEditor clientEditor;
-    private final CreditEditor creditEditor;
-
     Grid<Client> clientGrid;
     Grid<Credit> creditGrid;
     Grid<CreditType> creditTypeGrid;
@@ -40,9 +40,8 @@ public class MainView extends VerticalLayout{
 
 
     public MainView(CreditTypeRepository creditTypeRepository, CreditRepository creditRepository, ClientRepository clientRepository,
-                    DepositTypeRepository depositTypeRepository, DepositRepository depositRepository, ClientEditor clientEditor, CreditEditor creditEditor){
+                    DepositTypeRepository depositTypeRepository, DepositRepository depositRepository, ClientEditor clientEditor){
         this.clientEditor = clientEditor;
-        this.creditEditor = creditEditor;
 
         clientGrid = new Grid<>(Client.class);
         clientGrid.setColumnReorderingAllowed(true);
@@ -104,28 +103,7 @@ public class MainView extends VerticalLayout{
         buttonConfig("Filter by client name");
         filter.addValueChangeListener(event -> creditsFiltering(event.getValue(), creditRepository));
         creditGrid.setItems(creditRepository.findAll());
-        add(addNewCreditBtn, creditGrid,creditEditor);
-
-
-        creditGrid.asSingleSelect().addValueChangeListener(e -> {
-            System.out.println(e.getValue());
-            creditEditor.editCredit(e.getValue(),creditTypeRepository);
-        });
-
-
-        addNewCreditBtn.addClickListener(e -> {
-            try {
-                creditEditor.editCredit(new Credit(creditTypeRepository.getReferenceById(1L),0L),creditTypeRepository);
-            } catch (SQLDataException ex) {
-                throw new RuntimeException(ex);
-            }
-        });
-
-
-        creditEditor.setChangeHandler(() -> {
-            creditEditor.setVisible(false);
-            creditsFiltering(filter.getValue(),creditRepository);
-        });
+        add(addNewCreditBtn, creditGrid);
 
     }
 
