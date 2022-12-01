@@ -9,6 +9,7 @@ import java.sql.SQLDataException;
 
 @Entity
 @Table(name="deposit")
+
 public class Deposit {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,13 +27,15 @@ public class Deposit {
 
     }
 
-    public Deposit(DepositType depositType, Long balance) throws SQLDataException{
+    public Deposit(Client client, DepositType depositType, Long balance) {
+        this.client = client;
         this.depositType = depositType;
-        if(this.depositType.getMinAmount()>balance || balance>this.depositType.getMaxAmount()){
-            throw new SQLDataException("Deposit balance is invalid");
-        }else{
-            this.balance=balance;
-        }
+        this.balance=balance;
+    }
+
+    public Deposit(DepositType depositType, Long balance) {
+        this.depositType = depositType;
+        this.balance=balance;
     }
 
     public Long getId() {

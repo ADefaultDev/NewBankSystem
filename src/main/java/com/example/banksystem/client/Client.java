@@ -13,6 +13,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "client")
@@ -146,5 +147,22 @@ public class Client {
     public String toString() {
         return lastname + " " +
                 firstname + " " + middlename;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+
+        if (o == this) {
+            return true;
+        }
+
+
+        if (!(o instanceof Client)) {
+            return false;
+        }
+
+        Client c = (Client) o;
+
+        return Objects.equals(this.getLastname(), c.getLastname());
     }
 }

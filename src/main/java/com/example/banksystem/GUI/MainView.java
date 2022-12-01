@@ -10,38 +10,34 @@ import com.example.banksystem.deposit.Deposit;
 import com.example.banksystem.deposit.DepositRepository;
 import com.example.banksystem.deposit.DepositType;
 import com.example.banksystem.deposit.DepositTypeRepository;
-import com.vaadin.flow.component.Key;
-import com.vaadin.flow.component.KeyNotifier;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.Route;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import java.sql.SQLDataException;
-
 @Route
-@Transactional
 public class MainView extends VerticalLayout{
-
+    private final DepositEditor depositEditor;
     private final ClientEditor clientEditor;
+
     Grid<Client> clientGrid;
     Grid<Credit> creditGrid;
     Grid<CreditType> creditTypeGrid;
     Grid<DepositType> depositTypeGrid;
     Grid<Deposit> depositGrid;
     TextField filter;
-    private final Button addNewClientBtn, addNewCreditBtn;
+    private final Button addNewClientBtn, addNewCreditBtn, addNewDepositBtn;
 
 
     public MainView(CreditTypeRepository creditTypeRepository, CreditRepository creditRepository, ClientRepository clientRepository,
-                    DepositTypeRepository depositTypeRepository, DepositRepository depositRepository, ClientEditor clientEditor){
+                    DepositTypeRepository depositTypeRepository, DepositRepository depositRepository, ClientEditor clientEditor, DepositEditor depositEditor){
+        this.depositEditor = depositEditor;
         this.clientEditor = clientEditor;
+
 
         clientGrid = new Grid<>(Client.class);
         clientGrid.setColumnReorderingAllowed(true);
@@ -57,6 +53,7 @@ public class MainView extends VerticalLayout{
 
         this.addNewClientBtn = new Button("New client", VaadinIcon.PLUS.create());
         this.addNewCreditBtn = new Button("New credit", VaadinIcon.PLUS.create());
+        this.addNewDepositBtn = new Button("New deposit", VaadinIcon.PLUS.create());
 
 
 
@@ -77,10 +74,12 @@ public class MainView extends VerticalLayout{
 
         //Open editor from ClientEditor.class when clicking on client grid
         clientGrid.asSingleSelect().addValueChangeListener(e -> {
+            System.out.println(e.getValue());
             clientEditor.editClient(e.getValue());
         });
         //AddNewClientBtn activating editClient function from Editor if clicked
         addNewClientBtn.addClickListener(e -> clientEditor.editClient(new Client("", "", "", "")));
+
 
         //After using editor, changeHandler will remove it and set refreshed data to grid
         clientEditor.setChangeHandler(() -> {
@@ -91,7 +90,7 @@ public class MainView extends VerticalLayout{
     }
 
     public void clientsFiltering(String filterText, ClientRepository clientRepository){
-        if(StringUtils.isEmpty(filterText)){
+        if(!StringUtils.hasText(filterText)){
             clientGrid.setItems(clientRepository.findAll());
         }else {
             clientGrid.setItems(clientRepository.findClientByName(filterText.replace(" ", "")));
@@ -108,7 +107,7 @@ public class MainView extends VerticalLayout{
     }
 
     public void creditsFiltering(String filterText, CreditRepository creditRepository){
-        if(StringUtils.isEmpty(filterText)){
+        if(!StringUtils.hasText(filterText)){
             creditGrid.setItems(creditRepository.findAll());
         }else {
             creditGrid.setItems(creditRepository.findCreditByClient(filterText.replace(" ", "")));
@@ -124,7 +123,7 @@ public class MainView extends VerticalLayout{
     }
 
     public void creditTypeFiltering(String filterText, CreditTypeRepository creditTypeRepository){
-        if(StringUtils.isEmpty(filterText)){
+        if(!StringUtils.hasText(filterText)){
             creditTypeGrid.setItems(creditTypeRepository.findAll());
         }else {
             creditTypeGrid.setItems(creditTypeRepository.findByNameStartsWithIgnoreCase(filterText));
@@ -136,11 +135,24 @@ public class MainView extends VerticalLayout{
         buttonConfig("Filter by client name");
         filter.addValueChangeListener(event -> depositsFiltering(event.getValue(),depositRepository));
         depositGrid.setItems(depositRepository.findAll());
-        add(depositGrid);
+        add(addNewDepositBtn, depositGrid, depositEditor);
+
+        depositGrid.asSingleSelect().addValueChangeListener(e -> {
+            System.out.println(e.getValue() + "From grid");
+            depositEditor.editDeposit(e.getValue());
+        });
+
+        addNewDepositBtn.addClickListener(e -> depositEditor.editDeposit(new Deposit()));
+
+
+        depositEditor.setChangeHandler(() -> {
+            depositEditor.setVisible(false);
+            depositsFiltering(filter.getValue(),depositRepository);
+        });
     }
 
     public void depositsFiltering(String filterText, DepositRepository depositRepository){
-        if(StringUtils.isEmpty(filterText)){
+        if(!StringUtils.hasText(filterText)){
             depositGrid.setItems(depositRepository.findAll());
         }else {
             depositGrid.setItems(depositRepository.findDepositByClient(filterText.replace(" ", "")));
@@ -156,7 +168,7 @@ public class MainView extends VerticalLayout{
     }
 
     public void depositTypesFiltering(String filterText, DepositTypeRepository depositTypeRepository){
-        if(StringUtils.isEmpty(filterText)){
+        if(!StringUtils.hasText(filterText)){
             depositTypeGrid.setItems(depositTypeRepository.findAll());
         }else {
             depositTypeGrid.setItems(depositTypeRepository.findByNameStartsWithIgnoreCase(filterText));
@@ -171,7 +183,7 @@ public class MainView extends VerticalLayout{
 
     public void removeAll(){
         filter.setValue("");
-        this.remove(filter,clientGrid, creditTypeGrid, creditGrid, depositTypeGrid, depositGrid, addNewClientBtn,addNewCreditBtn);
+        this.remove(filter,clientGrid, creditTypeGrid, creditGrid, depositTypeGrid, depositGrid, addNewClientBtn,addNewCreditBtn, addNewDepositBtn);
 
 
     }
