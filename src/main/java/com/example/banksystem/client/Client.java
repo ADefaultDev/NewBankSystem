@@ -149,20 +149,5 @@ public class Client {
                 firstname + " " + middlename;
     }
 
-    @Override
-    public boolean equals(Object o) {
 
-        if (o == this) {
-            return true;
-        }
-
-
-        if (!(o instanceof Client)) {
-            return false;
-        }
-
-        Client c = (Client) o;
-
-        return Objects.equals(this.getLastname(), c.getLastname());
-    }
 }
