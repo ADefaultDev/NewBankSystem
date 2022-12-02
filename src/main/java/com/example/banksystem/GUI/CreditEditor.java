@@ -2,6 +2,10 @@ package com.example.banksystem.GUI;
 
 import com.example.banksystem.client.Client;
 import com.example.banksystem.client.ClientRepository;
+import com.example.banksystem.credit.Credit;
+import com.example.banksystem.credit.CreditRepository;
+import com.example.banksystem.credit.CreditType;
+import com.example.banksystem.credit.CreditTypeRepository;
 import com.example.banksystem.deposit.Deposit;
 import com.example.banksystem.deposit.DepositRepository;
 import com.example.banksystem.deposit.DepositType;
@@ -17,80 +21,80 @@ import java.util.List;
 
 @SpringComponent
 @UIScope
-
 @SuppressWarnings("unchecked")
-public class DepositEditor extends Editor {
-    private Deposit deposit;
+public class CreditEditor extends Editor{
+
+    private Credit credit;
     ClientRepository clientRepository;
 
 
-    DepositTypeRepository depositTypeRepository;
+    CreditTypeRepository creditTypeRepository;
     TextField balance = new TextField("Balance");
 
-    Select<DepositType> depositTypeSelect = new Select<>();
+    Select<CreditType> creditTypeSelect = new Select<>();
 
     Select<Client> clientSelect = new Select<>();
-    List<DepositType> depositTypes;
+    List<CreditType> creditTypes;
     List<Client> clients;
 
-    Binder<Deposit> binder = new Binder<>(Deposit.class);
+    Binder<Credit> binder = new Binder<>(Credit.class);
 
     @Autowired
-    public DepositEditor(DepositRepository repository, ClientRepository clientRepository, DepositTypeRepository depositTypeRepository) {
+    public CreditEditor(CreditRepository repository, ClientRepository clientRepository, CreditTypeRepository creditTypeRepository) {
         super(repository);
         this.clientRepository = clientRepository;
-        this.depositTypeRepository = depositTypeRepository;
-        depositTypes = depositTypeRepository.findAll();
+        this.creditTypeRepository = creditTypeRepository;
+        creditTypes = creditTypeRepository.findAll();
         clients = clientRepository.findAll();
-        depositTypeSelect.setLabel("Choose deposit type:");
+        creditTypeSelect.setLabel("Choose credit type:");
         clientSelect.setLabel("Choose the client:");
-        add(balance, depositTypeSelect, clientSelect, actions);
+        add(balance, creditTypeSelect, clientSelect, actions);
         binder.bindInstanceFields(this);
     }
     @Override
     void delete() {
-        repository.delete(deposit);
+        repository.delete(credit);
         changeHandler.onChange();
     }
     @Override
     void save() {
         binder.validate();
-        this.deposit.setDepositType(depositTypeSelect.getValue());
-        this.deposit.setClient(clientSelect.getValue());
-        repository.save(deposit);
+        this.credit.setCreditType(creditTypeSelect.getValue());
+        this.credit.setClient(clientSelect.getValue());
+        repository.save(credit);
         changeHandler.onChange();
 
     }
 
-    public final void editDeposit(Deposit deposit) {
-        if (deposit == null) {
+    public final void editCredit(Credit credit) {
+        if (credit == null) {
             setVisible(false);
             return;
         }
-        depositTypeSelect.setItems(depositTypes);
+        creditTypeSelect.setItems(creditTypes);
         clientSelect.setItems(clients);
 
 
-        final boolean persisted = deposit.getId() != null;
+        final boolean persisted = credit.getId() != null;
         if (persisted) {
-            this.deposit = (Deposit) repository.findById(deposit.getId()).orElse(null);
+            this.credit = (Credit) repository.findById(credit.getId()).orElse(null);
         }
         else {
-            this.deposit = deposit;
+            this.credit = credit;
         }
         int depositTypeId;
         int clientId;
         try {
-            depositTypeId = Math.toIntExact(this.deposit.getDepositType().getId());
-            clientId = Math.toIntExact(this.deposit.getClient().getId());
+            depositTypeId = Math.toIntExact(this.credit.getCreditType().getId());
+            clientId = Math.toIntExact(this.credit.getClient().getId());
         }catch (NullPointerException e){
             depositTypeId = 1;
             clientId=2;
         }
-        depositTypeSelect.setValue(depositTypes.get(depositTypeId-1));
+        creditTypeSelect.setValue(creditTypes.get(depositTypeId-1));
         clientSelect.setValue(clients.get(clientId-2));
 
-        binder.setBean(this.deposit);
+        binder.setBean(this.credit);
         setVisible(true);
         balance.focus();
 

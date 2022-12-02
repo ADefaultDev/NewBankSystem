@@ -24,6 +24,8 @@ public class MainView extends VerticalLayout{
     private final DepositEditor depositEditor;
     private final ClientEditor clientEditor;
 
+    private final CreditEditor creditEditor;
+
     Grid<Client> clientGrid;
     Grid<Credit> creditGrid;
     Grid<CreditType> creditTypeGrid;
@@ -34,9 +36,11 @@ public class MainView extends VerticalLayout{
 
 
     public MainView(CreditTypeRepository creditTypeRepository, CreditRepository creditRepository, ClientRepository clientRepository,
-                    DepositTypeRepository depositTypeRepository, DepositRepository depositRepository, ClientEditor clientEditor, DepositEditor depositEditor){
+                    DepositTypeRepository depositTypeRepository, DepositRepository depositRepository, ClientEditor clientEditor, DepositEditor depositEditor,
+                    CreditEditor creditEditor){
         this.depositEditor = depositEditor;
         this.clientEditor = clientEditor;
+        this.creditEditor = creditEditor;
 
 
         clientGrid = new Grid<>(Client.class);
@@ -102,8 +106,19 @@ public class MainView extends VerticalLayout{
         buttonConfig("Filter by client name");
         filter.addValueChangeListener(event -> creditsFiltering(event.getValue(), creditRepository));
         creditGrid.setItems(creditRepository.findAll());
-        add(addNewCreditBtn, creditGrid);
+        add(addNewCreditBtn, creditGrid, creditEditor);
 
+        creditGrid.asSingleSelect().addValueChangeListener(e -> {
+            creditEditor.editCredit(e.getValue());
+        });
+
+        addNewCreditBtn.addClickListener(e -> creditEditor.editCredit(new Credit()));
+
+
+        creditEditor.setChangeHandler(() -> {
+            creditEditor.setVisible(false);
+            creditsFiltering(filter.getValue(),creditRepository);
+        });
     }
 
     public void creditsFiltering(String filterText, CreditRepository creditRepository){
@@ -138,7 +153,6 @@ public class MainView extends VerticalLayout{
         add(addNewDepositBtn, depositGrid, depositEditor);
 
         depositGrid.asSingleSelect().addValueChangeListener(e -> {
-            System.out.println(e.getValue() + "From grid");
             depositEditor.editDeposit(e.getValue());
         });
 
@@ -183,6 +197,7 @@ public class MainView extends VerticalLayout{
 
     public void removeAll(){
         filter.setValue("");
+        this.remove(creditEditor,clientEditor,depositEditor);
         this.remove(filter,clientGrid, creditTypeGrid, creditGrid, depositTypeGrid, depositGrid, addNewClientBtn,addNewCreditBtn, addNewDepositBtn);
 
 
