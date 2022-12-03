@@ -78,21 +78,36 @@ public class CreditEditor extends Editor{
         final boolean persisted = credit.getId() != null;
         if (persisted) {
             this.credit = (Credit) repository.findById(credit.getId()).orElse(null);
+
+
         }
         else {
             this.credit = credit;
         }
-        int depositTypeId;
+        int creditTypeId;
         int clientId;
         try {
-            depositTypeId = Math.toIntExact(this.credit.getCreditType().getId());
+            creditTypeId = Math.toIntExact(this.credit.getCreditType().getId());
             clientId = Math.toIntExact(this.credit.getClient().getId());
         }catch (NullPointerException e){
-            depositTypeId = 1;
+            creditTypeId = 1;
             clientId=2;
         }
-        creditTypeSelect.setValue(creditTypes.get(depositTypeId-1));
+        creditTypeSelect.setValue(creditTypes.get(creditTypeId-1));
         clientSelect.setValue(clients.get(clientId-2));
+        if(persisted){
+            creditTypeSelect.setInvalid(true);
+            clientSelect.setInvalid(true);
+            int finalCreditTypeId = creditTypeId;
+            creditTypeSelect.setItemEnabledProvider(item -> creditTypes.get(finalCreditTypeId -1).equals(item));
+            int finalClientId = clientId;
+            clientSelect.setItemEnabledProvider(item -> clients.get(finalClientId -2).equals(item));
+        }else{
+            creditTypeSelect.setInvalid(false);
+            clientSelect.setInvalid(false);
+            creditTypeSelect.setItemEnabledProvider(item -> item.equals(item));
+            clientSelect.setItemEnabledProvider(item -> item.equals(item));
+        }
 
         binder.setBean(this.credit);
         setVisible(true);

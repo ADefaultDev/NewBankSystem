@@ -90,6 +90,20 @@ public class DepositEditor extends Editor {
         depositTypeSelect.setValue(depositTypes.get(depositTypeId-1));
         clientSelect.setValue(clients.get(clientId-2));
 
+        if(persisted){
+            depositTypeSelect.setInvalid(true);
+            clientSelect.setInvalid(true);
+            int finalDepositTypeId = depositTypeId;
+            depositTypeSelect.setItemEnabledProvider(item -> depositTypes.get(finalDepositTypeId -1).equals(item));
+            int finalClientId = clientId;
+            clientSelect.setItemEnabledProvider(item -> clients.get(finalClientId -2).equals(item));
+        }else{
+            depositTypeSelect.setInvalid(false);
+            clientSelect.setInvalid(false);
+            depositTypeSelect.setItemEnabledProvider(item -> item.equals(item));
+            clientSelect.setItemEnabledProvider(item -> item.equals(item));
+        }
+
         binder.setBean(this.deposit);
         setVisible(true);
         balance.focus();
