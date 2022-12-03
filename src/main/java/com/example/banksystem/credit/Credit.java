@@ -31,6 +31,9 @@ public class Credit {
         this.balance = balance;
 
     }
+    public Credit(Long balance) {
+        this.balance = balance;
+    }
 
     public Long getId() {
         return id;

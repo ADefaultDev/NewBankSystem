@@ -112,7 +112,7 @@ public class MainView extends VerticalLayout{
             creditEditor.editCredit(e.getValue());
         });
 
-        addNewCreditBtn.addClickListener(e -> creditEditor.editCredit(new Credit()));
+        addNewCreditBtn.addClickListener(e -> creditEditor.editCredit(new Credit(0L)));
 
 
         creditEditor.setChangeHandler(() -> {

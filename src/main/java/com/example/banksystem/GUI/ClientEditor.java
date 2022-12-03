@@ -40,15 +40,7 @@ public class ClientEditor extends Editor {
     @Override
     void save() {
         binder.validate();
-        if (passportField.getValue().length() == 10
-                && !passportField.getValue().startsWith("0")
-                && passportField.getValue().matches("[0-9]+")
-                && lastName.getValue().chars().allMatch(Character::isLetter)
-                && firstName.getValue().chars().allMatch(Character::isLetter)
-                && middleName.getValue().chars().allMatch(Character::isLetter)
-                && lastName.getValue().length() > 0
-                && firstName.getValue().length() > 0
-                && middleName.getValue().length() > 0) {
+        if (binder.isValid()) {
             repository.save(client);
             changeHandler.onChange();
         }

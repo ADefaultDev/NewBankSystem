@@ -100,8 +100,8 @@ public class DepositEditor extends Editor {
         }else{
             depositTypeSelect.setInvalid(false);
             clientSelect.setInvalid(false);
-            depositTypeSelect.setItemEnabledProvider(item -> item.equals(item));
-            clientSelect.setItemEnabledProvider(item -> item.equals(item));
+            depositTypeSelect.setItemEnabledProvider(null);
+            clientSelect.setItemEnabledProvider(null);
         }
 
         binder.setBean(this.deposit);
