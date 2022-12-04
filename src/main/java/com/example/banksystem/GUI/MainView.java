@@ -17,7 +17,10 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.server.VaadinService;
 import org.springframework.util.StringUtils;
+
+import java.util.Locale;
 
 @Route
 public class MainView extends VerticalLayout{
@@ -38,6 +41,8 @@ public class MainView extends VerticalLayout{
     public MainView(CreditTypeRepository creditTypeRepository, CreditRepository creditRepository, ClientRepository clientRepository,
                     DepositTypeRepository depositTypeRepository, DepositRepository depositRepository, ClientEditor clientEditor, DepositEditor depositEditor,
                     CreditEditor creditEditor){
+        Locale locale = VaadinService.getCurrentRequest().getLocale();
+
         this.depositEditor = depositEditor;
         this.clientEditor = clientEditor;
         this.creditEditor = creditEditor;

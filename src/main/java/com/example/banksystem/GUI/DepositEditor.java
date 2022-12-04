@@ -2,6 +2,7 @@ package com.example.banksystem.GUI;
 
 import com.example.banksystem.client.Client;
 import com.example.banksystem.client.ClientRepository;
+import com.example.banksystem.credit.Credit;
 import com.example.banksystem.deposit.Deposit;
 import com.example.banksystem.deposit.DepositRepository;
 import com.example.banksystem.deposit.DepositType;
@@ -9,6 +10,7 @@ import com.example.banksystem.deposit.DepositTypeRepository;
 import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
+import com.vaadin.flow.data.converter.StringToLongConverter;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 import com.vaadin.flow.spring.annotation.UIScope;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,11 +42,13 @@ public class DepositEditor extends Editor {
         super(repository);
         this.clientRepository = clientRepository;
         this.depositTypeRepository = depositTypeRepository;
+
         depositTypes = depositTypeRepository.findAll();
         clients = clientRepository.findAll();
         depositTypeSelect.setLabel("Choose deposit type:");
         clientSelect.setLabel("Choose the client:");
         add(balance, depositTypeSelect, clientSelect, actions);
+
         binder.bindInstanceFields(this);
     }
     @Override
@@ -54,11 +58,13 @@ public class DepositEditor extends Editor {
     }
     @Override
     void save() {
-        binder.validate();
         this.deposit.setDepositType(depositTypeSelect.getValue());
         this.deposit.setClient(clientSelect.getValue());
-        repository.save(deposit);
-        changeHandler.onChange();
+        binder.validate();
+        if(binder.isValid()) {
+            repository.save(deposit);
+            changeHandler.onChange();
+        }
 
     }
 
@@ -105,6 +111,10 @@ public class DepositEditor extends Editor {
         }
 
         binder.setBean(this.deposit);
+        binder.forField(balance).withConverter(new StringToLongConverter("Not a number"))
+                .withValidator(balance -> balance > depositTypeSelect.getValue().getMinAmount() &&
+                        balance < depositTypeSelect.getValue().getMaxAmount(), "Wrong balance")
+                .bind(Deposit::getBalance, Deposit::setBalance);
         setVisible(true);
         balance.focus();
 
