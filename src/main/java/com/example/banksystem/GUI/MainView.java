@@ -12,12 +12,14 @@ import com.example.banksystem.deposit.DepositType;
 import com.example.banksystem.deposit.DepositTypeRepository;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.VaadinService;
+import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.util.StringUtils;
 
 import java.util.Locale;
@@ -72,7 +74,15 @@ public class MainView extends VerticalLayout{
         add(new Button("Show deposits" , event -> showDeposits(depositRepository)));
         add(new Button("Show deposit types" , event -> showDepositTypes(depositTypeRepository)));
         add(new Button("Remove all" , event  -> removeAll()));
+
+        //TODO add lang changing logic
+        ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
+        messageSource.setDefaultEncoding("UTF-8");
+        messageSource.setBasenames("lang/res");
+        String hello = messageSource.getMessage("hello",null, new Locale("ru"));
+        add(new Label(hello));
     }
+
 
     public void showClients(ClientRepository clientRepository){
         removeAll();

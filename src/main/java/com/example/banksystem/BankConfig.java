@@ -9,7 +9,6 @@ import com.example.banksystem.currency.CurrencyRepository;
 import com.example.banksystem.deposit.Deposit;
 import com.example.banksystem.deposit.DepositType;
 import com.example.banksystem.deposit.DepositTypeRepository;
-import com.helger.commons.state.ILeftRightIndicator;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -17,9 +16,12 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
+import java.util.Locale;
+import java.util.ResourceBundle;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -55,8 +57,7 @@ public class BankConfig {
                 //depositTypeInitialization(depositTypeRepository);
             }
 
-
-            System.out.println("Choose one option: ");
+            System.out.println("Choose option: ");
             System.out.println("1.Create a client");
             System.out.println("2.Create a credit");
             System.out.println("3.Create a deposit");
