@@ -37,18 +37,18 @@ public class MainView extends VerticalLayout{
     Grid<DepositType> depositTypeGrid;
     Grid<Deposit> depositGrid;
     TextField filter;
+
+    ResourceBundleMessageSource messageSource;
+    Locale viewLocale;
     private final Button addNewClientBtn, addNewCreditBtn, addNewDepositBtn;
 
 
     public MainView(CreditTypeRepository creditTypeRepository, CreditRepository creditRepository, ClientRepository clientRepository,
                     DepositTypeRepository depositTypeRepository, DepositRepository depositRepository, ClientEditor clientEditor, DepositEditor depositEditor,
                     CreditEditor creditEditor){
-        Locale locale = VaadinService.getCurrentRequest().getLocale();
-
         this.depositEditor = depositEditor;
         this.clientEditor = clientEditor;
         this.creditEditor = creditEditor;
-
 
         clientGrid = new Grid<>(Client.class);
         clientGrid.setColumnReorderingAllowed(true);
@@ -66,27 +66,25 @@ public class MainView extends VerticalLayout{
         this.addNewCreditBtn = new Button("New credit", VaadinIcon.PLUS.create());
         this.addNewDepositBtn = new Button("New deposit", VaadinIcon.PLUS.create());
 
-
-
-        add(new Button("Show clients" , event -> showClients(clientRepository)));
-        add(new Button("Show credits" , event -> showCredits(creditRepository,creditTypeRepository)));
-        add(new Button("Show credit types" , event -> showCreditTypes(creditTypeRepository)));
-        add(new Button("Show deposits" , event -> showDeposits(depositRepository)));
-        add(new Button("Show deposit types" , event -> showDepositTypes(depositTypeRepository)));
-        add(new Button("Remove all" , event  -> removeAll()));
-
-        //TODO add lang changing logic
-        ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
+        messageSource = new ResourceBundleMessageSource();
         messageSource.setDefaultEncoding("UTF-8");
         messageSource.setBasenames("lang/res");
-        String hello = messageSource.getMessage("hello",null, new Locale("ru"));
-        add(new Label(hello));
+        //Getting locale from browser settings
+        viewLocale = VaadinService.getCurrentRequest().getLocale();
+
+        add(new Button( messageSource.getMessage("ShowClients",null, viewLocale) , event -> showClients(clientRepository)));
+        add(new Button( messageSource.getMessage("ShowCredits",null, viewLocale) , event -> showCredits(creditRepository,creditTypeRepository)));
+        add(new Button( messageSource.getMessage("ShowCreditTypes",null, viewLocale) , event -> showCreditTypes(creditTypeRepository)));
+        add(new Button( messageSource.getMessage("ShowDeposits",null, viewLocale) , event -> showDeposits(depositRepository)));
+        add(new Button( messageSource.getMessage("ShowDepositTypes",null, viewLocale) , event -> showDepositTypes(depositTypeRepository)));
+        add(new Button( messageSource.getMessage("RemoveAll",null, viewLocale) , event  -> removeAll()));
+
     }
 
 
     public void showClients(ClientRepository clientRepository){
         removeAll();
-        buttonConfig("Filter by name");
+        buttonConfig(messageSource.getMessage("FilterByName",null, viewLocale));
         filter.addValueChangeListener(event -> clientsFiltering(event.getValue(),clientRepository));
         clientGrid.setItems(clientRepository.findAll());
         add(addNewClientBtn, clientGrid, clientEditor);
@@ -118,7 +116,7 @@ public class MainView extends VerticalLayout{
 
     public void showCredits(CreditRepository creditRepository, CreditTypeRepository creditTypeRepository){
         removeAll();
-        buttonConfig("Filter by client name");
+        buttonConfig(messageSource.getMessage("FilterByClientName",null, viewLocale));
         filter.addValueChangeListener(event -> creditsFiltering(event.getValue(), creditRepository));
         creditGrid.setItems(creditRepository.findAll());
         add(addNewCreditBtn, creditGrid, creditEditor);
@@ -146,7 +144,7 @@ public class MainView extends VerticalLayout{
 
     public void showCreditTypes(CreditTypeRepository creditTypeRepository){
         removeAll();
-        buttonConfig("Filter by name");
+        buttonConfig((messageSource.getMessage("FilterByName",null, viewLocale)));
         filter.addValueChangeListener(event -> creditTypeFiltering(event.getValue(), creditTypeRepository));
         creditTypeGrid.setItems(creditTypeRepository.findAll());
         add(creditTypeGrid);
@@ -162,7 +160,7 @@ public class MainView extends VerticalLayout{
 
     public void showDeposits(DepositRepository depositRepository){
         removeAll();
-        buttonConfig("Filter by client name");
+        buttonConfig((messageSource.getMessage("FilterByClientName",null, viewLocale)));
         filter.addValueChangeListener(event -> depositsFiltering(event.getValue(),depositRepository));
         depositGrid.setItems(depositRepository.findAll());
         add(addNewDepositBtn, depositGrid, depositEditor);
@@ -190,7 +188,7 @@ public class MainView extends VerticalLayout{
 
     public void showDepositTypes(DepositTypeRepository depositTypeRepository){
         removeAll();
-        buttonConfig("Filter by name");
+        buttonConfig((messageSource.getMessage("FilterByName",null, viewLocale)));
         filter.addValueChangeListener(event -> depositTypesFiltering(event.getValue(),depositTypeRepository));
         depositTypeGrid.setItems(depositTypeRepository.findAll());
         add(depositTypeGrid);
