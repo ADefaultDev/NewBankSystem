@@ -86,12 +86,15 @@ public class MainView extends VerticalLayout{
         removeAll();
         buttonConfig(messageSource.getMessage("FilterByName",null, viewLocale));
         filter.addValueChangeListener(event -> clientsFiltering(event.getValue(),clientRepository));
+
         clientGrid.setItems(clientRepository.findAll());
+
+        localizeClients();
+
         add(addNewClientBtn, clientGrid, clientEditor);
 
         //Open editor from ClientEditor.class when clicking on client grid
         clientGrid.asSingleSelect().addValueChangeListener(e -> {
-            System.out.println(e.getValue());
             clientEditor.editClient(e.getValue());
         });
         //AddNewClientBtn activating editClient function from Editor if clicked
@@ -104,6 +107,13 @@ public class MainView extends VerticalLayout{
             clientsFiltering(filter.getValue(),clientRepository);
         });
 
+    }
+
+    public void localizeClients(){
+        for (Grid.Column<Client> n:
+                clientGrid.getColumns()) {
+            clientGrid.getColumnByKey(n.getKey()).setHeader(messageSource.getMessage(n.getKey(),null,viewLocale));
+        }
     }
 
     public void clientsFiltering(String filterText, ClientRepository clientRepository){
@@ -119,8 +129,10 @@ public class MainView extends VerticalLayout{
         buttonConfig(messageSource.getMessage("FilterByClientName",null, viewLocale));
         filter.addValueChangeListener(event -> creditsFiltering(event.getValue(), creditRepository));
         creditGrid.setItems(creditRepository.findAll());
-        add(addNewCreditBtn, creditGrid, creditEditor);
 
+        localizeCredits();
+
+        add(addNewCreditBtn, creditGrid, creditEditor);
         creditGrid.asSingleSelect().addValueChangeListener(e -> {
             creditEditor.editCredit(e.getValue());
         });
@@ -132,6 +144,16 @@ public class MainView extends VerticalLayout{
             creditEditor.setVisible(false);
             creditsFiltering(filter.getValue(),creditRepository);
         });
+    }
+
+    public void localizeCredits(){
+        creditGrid.getColumnByKey("balance").setHeader(messageSource.getMessage("balance",null,viewLocale));
+        for (Grid.Column<Credit> n:
+             creditGrid.getColumns()) {
+            creditGrid.getColumnByKey(n.getKey()).setHeader(messageSource.getMessage(n.getKey(),null,viewLocale));
+        }
+
+
     }
 
     public void creditsFiltering(String filterText, CreditRepository creditRepository){
@@ -149,6 +171,8 @@ public class MainView extends VerticalLayout{
         creditTypeGrid.setItems(creditTypeRepository.findAll());
         add(creditTypeGrid);
     }
+
+
 
     public void creditTypeFiltering(String filterText, CreditTypeRepository creditTypeRepository){
         if(!StringUtils.hasText(filterText)){
