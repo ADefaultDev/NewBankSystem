@@ -110,9 +110,9 @@ public class MainView extends VerticalLayout{
     }
 
     public void localizeClients(){
-        for (Grid.Column<Client> n:
+        for (Grid.Column<Client> grid:
                 clientGrid.getColumns()) {
-            clientGrid.getColumnByKey(n.getKey()).setHeader(messageSource.getMessage(n.getKey(),null,viewLocale));
+            clientGrid.getColumnByKey(grid.getKey()).setHeader(messageSource.getMessage(grid.getKey(),null,viewLocale));
         }
     }
 
@@ -147,10 +147,9 @@ public class MainView extends VerticalLayout{
     }
 
     public void localizeCredits(){
-        creditGrid.getColumnByKey("balance").setHeader(messageSource.getMessage("balance",null,viewLocale));
-        for (Grid.Column<Credit> n:
+        for (Grid.Column<Credit> grid:
              creditGrid.getColumns()) {
-            creditGrid.getColumnByKey(n.getKey()).setHeader(messageSource.getMessage(n.getKey(),null,viewLocale));
+            creditGrid.getColumnByKey(grid.getKey()).setHeader(messageSource.getMessage(grid.getKey(),null,viewLocale));
         }
 
 
@@ -169,7 +168,17 @@ public class MainView extends VerticalLayout{
         buttonConfig((messageSource.getMessage("FilterByName",null, viewLocale)));
         filter.addValueChangeListener(event -> creditTypeFiltering(event.getValue(), creditTypeRepository));
         creditTypeGrid.setItems(creditTypeRepository.findAll());
+
+        localizeCreditTypes();
+
         add(creditTypeGrid);
+    }
+
+    public void localizeCreditTypes(){
+        for (Grid.Column<CreditType> grid:
+                creditTypeGrid.getColumns()) {
+            creditTypeGrid.getColumnByKey(grid.getKey()).setHeader(messageSource.getMessage(grid.getKey(),null,viewLocale));
+        }
     }
 
 
@@ -187,6 +196,9 @@ public class MainView extends VerticalLayout{
         buttonConfig((messageSource.getMessage("FilterByClientName",null, viewLocale)));
         filter.addValueChangeListener(event -> depositsFiltering(event.getValue(),depositRepository));
         depositGrid.setItems(depositRepository.findAll());
+
+        localizeDeposits();
+
         add(addNewDepositBtn, depositGrid, depositEditor);
 
         depositGrid.asSingleSelect().addValueChangeListener(e -> {
@@ -202,6 +214,13 @@ public class MainView extends VerticalLayout{
         });
     }
 
+    public void localizeDeposits(){
+        for (Grid.Column<Deposit> grid:
+                depositGrid.getColumns()) {
+            depositGrid.getColumnByKey(grid.getKey()).setHeader(messageSource.getMessage(grid.getKey(),null,viewLocale));
+        }
+    }
+
     public void depositsFiltering(String filterText, DepositRepository depositRepository){
         if(!StringUtils.hasText(filterText)){
             depositGrid.setItems(depositRepository.findAll());
@@ -215,7 +234,17 @@ public class MainView extends VerticalLayout{
         buttonConfig((messageSource.getMessage("FilterByName",null, viewLocale)));
         filter.addValueChangeListener(event -> depositTypesFiltering(event.getValue(),depositTypeRepository));
         depositTypeGrid.setItems(depositTypeRepository.findAll());
+
+        localizeDepositTypes();
+
         add(depositTypeGrid);
+    }
+
+    public void localizeDepositTypes(){
+        for (Grid.Column<DepositType> grid:
+                depositTypeGrid.getColumns()) {
+            depositTypeGrid.getColumnByKey(grid.getKey()).setHeader(messageSource.getMessage(grid.getKey(),null,viewLocale));
+        }
     }
 
     public void depositTypesFiltering(String filterText, DepositTypeRepository depositTypeRepository){
