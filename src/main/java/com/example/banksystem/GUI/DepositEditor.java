@@ -14,8 +14,10 @@ import com.vaadin.flow.data.converter.StringToLongConverter;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 import com.vaadin.flow.spring.annotation.UIScope;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.support.ResourceBundleMessageSource;
 
 import java.util.List;
+import java.util.Locale;
 
 @SpringComponent
 @UIScope
@@ -38,8 +40,9 @@ public class DepositEditor extends Editor {
     Binder<Deposit> binder = new Binder<>(Deposit.class);
 
     @Autowired
-    public DepositEditor(DepositRepository repository, ClientRepository clientRepository, DepositTypeRepository depositTypeRepository) {
-        super(repository);
+    public DepositEditor(DepositRepository repository, ClientRepository clientRepository,
+                         DepositTypeRepository depositTypeRepository, ResourceBundleMessageSource messageSource) {
+        super(repository, messageSource);
         this.clientRepository = clientRepository;
         this.depositTypeRepository = depositTypeRepository;
 

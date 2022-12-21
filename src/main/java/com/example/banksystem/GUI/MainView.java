@@ -47,8 +47,15 @@ public class MainView extends VerticalLayout{
     public MainView(CreditTypeRepository creditTypeRepository, CreditRepository creditRepository, ClientRepository clientRepository,
                     DepositTypeRepository depositTypeRepository, DepositRepository depositRepository, ClientEditor clientEditor, DepositEditor depositEditor,
                     CreditEditor creditEditor){
+        messageSource = new ResourceBundleMessageSource();
+        messageSource.setDefaultEncoding("UTF-8");
+        messageSource.setBasenames("lang/res");
+        //Getting locale from browser settings
+        viewLocale = VaadinService.getCurrentRequest().getLocale();
+
         this.depositEditor = depositEditor;
         this.clientEditor = clientEditor;
+        clientEditor.setLocale(viewLocale);
         this.creditEditor = creditEditor;
 
         clientGrid = new Grid<>(Client.class);
@@ -63,15 +70,11 @@ public class MainView extends VerticalLayout{
         depositTypeGrid.setColumnReorderingAllowed(true);
         filter = new TextField();
 
-        this.addNewClientBtn = new Button("New client", VaadinIcon.PLUS.create());
-        this.addNewCreditBtn = new Button("New credit", VaadinIcon.PLUS.create());
-        this.addNewDepositBtn = new Button("New deposit", VaadinIcon.PLUS.create());
+        this.addNewClientBtn = new Button(( messageSource.getMessage("NewClient",null, viewLocale)), VaadinIcon.PLUS.create());
+        this.addNewCreditBtn = new Button(( messageSource.getMessage("NewCredit",null, viewLocale)), VaadinIcon.PLUS.create());
+        this.addNewDepositBtn = new Button(( messageSource.getMessage("NewDeposit",null, viewLocale)), VaadinIcon.PLUS.create());
 
-        messageSource = new ResourceBundleMessageSource();
-        messageSource.setDefaultEncoding("UTF-8");
-        messageSource.setBasenames("lang/res");
-        //Getting locale from browser settings
-        viewLocale = VaadinService.getCurrentRequest().getLocale();
+
 
         add(new Button( messageSource.getMessage("ShowClients",null, viewLocale) , event -> showClients(clientRepository)));
         add(new Button( messageSource.getMessage("ShowCredits",null, viewLocale) , event -> showCredits(creditRepository)));
@@ -114,7 +117,7 @@ public class MainView extends VerticalLayout{
     public void localizeClients(){
         for (Grid.Column<Client> grid:
                 clientGrid.getColumns()) {
-            clientGrid.getColumnByKey(grid.getKey()).setHeader(messageSource.getMessage(grid.getKey(),null,viewLocale));
+            clientGrid.getColumnByKey(grid.getKey()).setHeader(messageSource.getMessage(grid.getKey(),null, viewLocale));
         }
     }
 
@@ -170,7 +173,7 @@ public class MainView extends VerticalLayout{
     public void localizeCredits(){
         for (Grid.Column<Credit> column:
              creditGrid.getColumns()) {
-            creditGrid.getColumnByKey(column.getKey()).setHeader(messageSource.getMessage(column.getKey(),null,viewLocale));
+            creditGrid.getColumnByKey(column.getKey()).setHeader(messageSource.getMessage(column.getKey(),null, viewLocale));
         }
     }
 
@@ -206,7 +209,7 @@ public class MainView extends VerticalLayout{
     public void localizeCreditTypes(){
         for (Grid.Column<CreditType> column:
                 creditTypeGrid.getColumns()) {
-            creditTypeGrid.getColumnByKey(column.getKey()).setHeader(messageSource.getMessage(column.getKey(),null,viewLocale));
+            creditTypeGrid.getColumnByKey(column.getKey()).setHeader(messageSource.getMessage(column.getKey(),null, viewLocale));
         }
     }
 
@@ -254,7 +257,7 @@ public class MainView extends VerticalLayout{
     public void localizeDeposits(){
         for (Grid.Column<Deposit> column:
                 depositGrid.getColumns()) {
-            depositGrid.getColumnByKey(column.getKey()).setHeader(messageSource.getMessage(column.getKey(),null,viewLocale));
+            depositGrid.getColumnByKey(column.getKey()).setHeader(messageSource.getMessage(column.getKey(),null, viewLocale));
         }
     }
 
@@ -290,7 +293,7 @@ public class MainView extends VerticalLayout{
     public void localizeDepositTypes(){
         for (Grid.Column<DepositType> column:
                 depositTypeGrid.getColumns()) {
-            depositTypeGrid.getColumnByKey(column.getKey()).setHeader(messageSource.getMessage(column.getKey(),null,viewLocale));
+            depositTypeGrid.getColumnByKey(column.getKey()).setHeader(messageSource.getMessage(column.getKey(),null, viewLocale));
         }
     }
 

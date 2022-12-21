@@ -8,6 +8,10 @@ import com.vaadin.flow.data.validator.RegexpValidator;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 import com.vaadin.flow.spring.annotation.UIScope;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.support.ResourceBundleMessageSource;
+
+import java.util.Locale;
+
 
 
 @SpringComponent
@@ -15,16 +19,25 @@ import org.springframework.beans.factory.annotation.Autowired;
 @SuppressWarnings("unchecked")
 public class ClientEditor extends Editor {
     private Client client;
-    TextField lastName = new TextField("Last name");
-    TextField firstName = new TextField("First name");
-    TextField middleName = new TextField("Middle name");
-    TextField passportField = new TextField("Passport");
+
+    TextField lastName;
+    TextField firstName;
+    TextField middleName;
+    TextField passportField;
 
     Binder<Client> binder = new Binder<>(Client.class);
 
     @Autowired
-    public ClientEditor(ClientRepository repository) {
-        super(repository);
+    public ClientEditor(ClientRepository repository, ResourceBundleMessageSource messageSource) {
+        super(repository, messageSource);
+
+
+
+        lastName = new TextField();
+        firstName = new TextField();
+        middleName = new TextField();
+        passportField = new TextField();
+
         add(lastName, firstName, middleName, passportField, actions);
 
         binder.bindInstanceFields(this);
@@ -49,6 +62,17 @@ public class ClientEditor extends Editor {
     }
 
     public final void editClient(Client client) {
+
+        lastName.setLabel(messageSource.getMessage("LastName",null, locale));
+        firstName.setLabel(messageSource.getMessage("FirstName",null, locale));
+        middleName.setLabel(messageSource.getMessage("MiddleName",null, locale));
+        passportField.setLabel(messageSource.getMessage("passport",null, locale));
+
+        save.setText(messageSource.getMessage("Save",null, locale));
+        cancel.setText(messageSource.getMessage("Cancel",null, locale));
+        delete.setText(messageSource.getMessage("Delete",null, locale));
+
+
         if (client == null) {
             setVisible(false);
             return;
@@ -65,27 +89,27 @@ public class ClientEditor extends Editor {
         binder.setBean(this.client);
         passportField.addValueChangeListener(this::valueChange);
         binder.forField(passportField)
-                .withValidator(passportField -> !passportField.startsWith("0"),"Passport mustn't start with 0")
-                .withValidator(passportField -> passportField.length() == 10, "Passport must contain 10 numbers")
-                .withValidator(new RegexpValidator("Passport must contain only numbers","\\d*"))
+                .withValidator(passportField -> !passportField.startsWith("0"),messageSource.getMessage("PassportStartsWithZero",null, locale))
+                .withValidator(passportField -> passportField.length() == 10, messageSource.getMessage("PassportContainsTenNumbers",null, locale))
+                .withValidator(new RegexpValidator(messageSource.getMessage("PassportContainsNumbers",null, locale),"\\d*"))
                 .bind(Client::getPassport,Client::setPassport);
 
         lastName.addValueChangeListener(this::valueChange);
         binder.forField(lastName)
-                        .withValidator(lastName -> lastName.chars().allMatch(Character::isLetter),"Last name must contain only letters")
-                        .withValidator(lastName-> lastName.length() > 0,"Last name must contain at least one letter")
+                        .withValidator(lastName -> lastName.chars().allMatch(Character::isLetter),messageSource.getMessage("LastNameContainsOnlyLetters",null, locale))
+                        .withValidator(lastName-> lastName.length() > 0,messageSource.getMessage("LastNameContainsOneLetter",null, locale))
                         .bind(Client::getLastname, Client::setLastname);
 
         firstName.addValueChangeListener(this::valueChange);
         binder.forField(firstName)
-                .withValidator(firstName -> firstName.chars().allMatch(Character::isLetter),"First name must contain only letters")
-                .withValidator(firstName -> firstName.length() > 0,"First name must contain at least one letter")
+                .withValidator(firstName -> firstName.chars().allMatch(Character::isLetter),messageSource.getMessage("FirstNameContainsOnlyLetters",null, locale))
+                .withValidator(firstName -> firstName.length() > 0,messageSource.getMessage("FirstNameContainsOneLetter",null, locale))
                 .bind(Client::getFirstname, Client::setFirstname);
 
         middleName.addValueChangeListener(this::valueChange);
         binder.forField(middleName)
-                .withValidator(middleName -> middleName.chars().allMatch(Character::isLetter),"Last name must contain only letters")
-                .withValidator(middleName -> middleName.length() > 0,"Last name must contain at least one letter")
+                .withValidator(middleName -> middleName.chars().allMatch(Character::isLetter),messageSource.getMessage("MiddleNameContainsOnlyLetters",null, locale))
+                .withValidator(middleName -> middleName.length() > 0,messageSource.getMessage("MiddleNameContainsOneLetter",null, locale))
                 .bind(Client::getMiddlename, Client::setMiddlename);
 
         setVisible(true);

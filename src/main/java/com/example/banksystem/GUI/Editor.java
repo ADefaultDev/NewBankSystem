@@ -9,7 +9,10 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.binder.Binder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.Locale;
 
 @SuppressWarnings("rawtypes")
 public abstract class Editor extends VerticalLayout implements KeyNotifier {
@@ -19,6 +22,9 @@ public abstract class Editor extends VerticalLayout implements KeyNotifier {
     Button cancel = new Button("Cancel");
     Button delete = new Button("Delete", VaadinIcon.TRASH.create());
 
+    ResourceBundleMessageSource messageSource;
+
+    Locale locale;
     HorizontalLayout actions = new HorizontalLayout(save, cancel, delete);
 
     Binder<?> binder = new Binder<>(Object.class);
@@ -27,8 +33,9 @@ public abstract class Editor extends VerticalLayout implements KeyNotifier {
 
 
     @Autowired
-    public Editor(JpaRepository repository){
+    public Editor(JpaRepository repository, ResourceBundleMessageSource messageSource){
         this.repository=repository;
+        this.messageSource=messageSource;
         save.getElement().getThemeList().add("primary");
         delete.getElement().getThemeList().add("error");
 
@@ -53,6 +60,10 @@ public abstract class Editor extends VerticalLayout implements KeyNotifier {
 
     public interface ChangeHandler {
         void onChange();
+    }
+
+    public void setLocale(Locale locale){
+        this.locale=locale;
     }
 
     public void valueChange(HasValue.ValueChangeEvent<String> e) {

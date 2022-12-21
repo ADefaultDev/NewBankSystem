@@ -17,8 +17,10 @@ import com.vaadin.flow.data.converter.StringToLongConverter;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 import com.vaadin.flow.spring.annotation.UIScope;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.support.ResourceBundleMessageSource;
 
 import java.util.List;
+import java.util.Locale;
 
 @SpringComponent
 @UIScope
@@ -40,8 +42,9 @@ public class CreditEditor extends Editor{
     Binder<Credit> binder = new Binder<>(Credit.class);
 
     @Autowired
-    public CreditEditor(CreditRepository repository, ClientRepository clientRepository, CreditTypeRepository creditTypeRepository) {
-        super(repository);
+    public CreditEditor(CreditRepository repository, ClientRepository clientRepository,
+                        CreditTypeRepository creditTypeRepository, ResourceBundleMessageSource messageSource) {
+        super(repository, messageSource);
         this.clientRepository = clientRepository;
         this.creditTypeRepository = creditTypeRepository;
 
