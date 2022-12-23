@@ -30,9 +30,6 @@ public class ClientEditor extends Editor {
     @Autowired
     public ClientEditor(ClientRepository repository, ResourceBundleMessageSource messageSource) {
         super(repository, messageSource);
-
-
-
         lastName = new TextField();
         firstName = new TextField();
         middleName = new TextField();
@@ -62,16 +59,10 @@ public class ClientEditor extends Editor {
     }
 
     public final void editClient(Client client) {
-
         lastName.setLabel(messageSource.getMessage("LastName",null, locale));
         firstName.setLabel(messageSource.getMessage("FirstName",null, locale));
         middleName.setLabel(messageSource.getMessage("MiddleName",null, locale));
         passportField.setLabel(messageSource.getMessage("passport",null, locale));
-
-        save.setText(messageSource.getMessage("Save",null, locale));
-        cancel.setText(messageSource.getMessage("Cancel",null, locale));
-        delete.setText(messageSource.getMessage("Delete",null, locale));
-
 
         if (client == null) {
             setVisible(false);

@@ -38,6 +38,10 @@ public class Deposit {
         this.balance=balance;
     }
 
+    public Deposit(long balance) {
+        this.balance=balance;
+    }
+
     public Long getId() {
         return id;
     }

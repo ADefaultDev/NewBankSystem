@@ -29,7 +29,7 @@ public class DepositEditor extends Editor {
 
 
     DepositTypeRepository depositTypeRepository;
-    TextField balance = new TextField("Balance");
+    TextField balance = new TextField();
 
     Select<DepositType> depositTypeSelect = new Select<>();
 
@@ -48,8 +48,6 @@ public class DepositEditor extends Editor {
 
         depositTypes = depositTypeRepository.findAll();
         clients = clientRepository.findAll();
-        depositTypeSelect.setLabel("Choose deposit type:");
-        clientSelect.setLabel("Choose the client:");
         add(balance, depositTypeSelect, clientSelect, actions);
 
         binder.bindInstanceFields(this);
@@ -71,57 +69,60 @@ public class DepositEditor extends Editor {
 
     }
 
-    public final void editDeposit(Deposit deposit) {
-        if (deposit == null) {
-            setVisible(false);
-            return;
-        }
-        depositTypeSelect.setItems(depositTypes);
-        clientSelect.setItems(clients);
+   public final void editDeposit(Deposit deposit) {
+       depositTypeSelect.setLabel(messageSource.getMessage("ChooseDepositType",null,locale));
+       clientSelect.setLabel(messageSource.getMessage("ChooseClient",null, locale));
+       balance.setLabel(messageSource.getMessage("balance",null,locale));
+
+       if (deposit == null) {
+           setVisible(false);
+           return;
+       }
+       depositTypeSelect.setItems(depositTypes);
+       clientSelect.setItems(clients);
 
 
-        final boolean persisted = deposit.getId() != null;
-        if (persisted) {
-            this.deposit = (Deposit) repository.findById(deposit.getId()).orElse(null);
-        }
-        else {
-            this.deposit = deposit;
-        }
-        int depositTypeId;
-        int clientId;
-        try {
-            depositTypeId = Math.toIntExact(this.deposit.getDepositType().getId());
-            clientId = Math.toIntExact(this.deposit.getClient().getId());
-        }catch (NullPointerException e){
-            depositTypeId = 1;
-            clientId=2;
-        }
-        depositTypeSelect.setValue(depositTypes.get(depositTypeId-1));
-        clientSelect.setValue(clients.get(clientId-2));
+       final boolean persisted = deposit.getId() != null;
+       if (persisted) {
+           this.deposit = (Deposit) repository.findById(deposit.getId()).orElse(null);
+       } else {
+           this.deposit = deposit;
+       }
+       int depositTypeId;
+       int clientId;
+       try {
+           depositTypeId = Math.toIntExact(this.deposit.getDepositType().getId());
+           clientId = Math.toIntExact(this.deposit.getClient().getId());
+       } catch (NullPointerException e) {
+           depositTypeId = 1;
+           clientId = 2;
+       }
+       depositTypeSelect.setValue(depositTypes.get(depositTypeId - 1));
+       clientSelect.setValue(clients.get(clientId - 2));
 
-        if(persisted){
-            depositTypeSelect.setInvalid(true);
-            clientSelect.setInvalid(true);
-            int finalDepositTypeId = depositTypeId;
-            depositTypeSelect.setItemEnabledProvider(item -> depositTypes.get(finalDepositTypeId -1).equals(item));
-            int finalClientId = clientId;
-            clientSelect.setItemEnabledProvider(item -> clients.get(finalClientId -2).equals(item));
-        }else{
-            depositTypeSelect.setInvalid(false);
-            clientSelect.setInvalid(false);
-            depositTypeSelect.setItemEnabledProvider(null);
-            clientSelect.setItemEnabledProvider(null);
-        }
+       if (persisted) {
+           depositTypeSelect.setInvalid(true);
+           clientSelect.setInvalid(true);
+           int finalDepositTypeId = depositTypeId;
+           depositTypeSelect.setItemEnabledProvider(item -> depositTypes.get(finalDepositTypeId - 1).equals(item));
+           int finalClientId = clientId;
+           clientSelect.setItemEnabledProvider(item -> clients.get(finalClientId - 2).equals(item));
+       } else {
+           depositTypeSelect.setInvalid(false);
+           clientSelect.setInvalid(false);
+           depositTypeSelect.setItemEnabledProvider(null);
+           clientSelect.setItemEnabledProvider(null);
+       }
 
-        binder.setBean(this.deposit);
-        binder.forField(balance).withConverter(new StringToLongConverter("Not a number"))
-                .withValidator(balance -> balance > depositTypeSelect.getValue().getMinAmount() &&
-                        balance < depositTypeSelect.getValue().getMaxAmount(), "Wrong balance")
-                .bind(Deposit::getBalance, Deposit::setBalance);
-        setVisible(true);
-        balance.focus();
+       binder.setBean(this.deposit);
+       binder.forField(balance).withConverter(new StringToLongConverter(messageSource.getMessage("NotANumber",null,locale)))
+               .withValidator(balance -> balance > depositTypeSelect.getValue().getMinAmount() &&
+                       balance < depositTypeSelect.getValue().getMaxAmount(), messageSource.getMessage("WrongBalance",null,locale))
+               .bind(Deposit::getBalance, Deposit::setBalance);
+       setVisible(true);
+       balance.focus();
+   }
 
 
 
-    }
 }

@@ -54,9 +54,11 @@ public class MainView extends VerticalLayout{
         viewLocale = VaadinService.getCurrentRequest().getLocale();
 
         this.depositEditor = depositEditor;
+        depositEditor.setLocale(viewLocale);
         this.clientEditor = clientEditor;
         clientEditor.setLocale(viewLocale);
         this.creditEditor = creditEditor;
+        creditEditor.setLocale(viewLocale);
 
         clientGrid = new Grid<>(Client.class);
         clientGrid.setColumnReorderingAllowed(true);
@@ -78,8 +80,8 @@ public class MainView extends VerticalLayout{
 
         add(new Button( messageSource.getMessage("ShowClients",null, viewLocale) , event -> showClients(clientRepository)));
         add(new Button( messageSource.getMessage("ShowCredits",null, viewLocale) , event -> showCredits(creditRepository)));
-        add(new Button( messageSource.getMessage("ShowCreditTypes",null, viewLocale) , event -> showCreditTypes(creditTypeRepository)));
         add(new Button( messageSource.getMessage("ShowDeposits",null, viewLocale) , event -> showDeposits(depositRepository)));
+        add(new Button( messageSource.getMessage("ShowCreditTypes",null, viewLocale) , event -> showCreditTypes(creditTypeRepository)));
         add(new Button( messageSource.getMessage("ShowDepositTypes",null, viewLocale) , event -> showDepositTypes(depositTypeRepository)));
         add(new Button( messageSource.getMessage("RemoveAll",null, viewLocale) , event  -> removeAll()));
 
@@ -236,7 +238,7 @@ public class MainView extends VerticalLayout{
             depositEditor.editDeposit(e.getValue());
         });
 
-        addNewDepositBtn.addClickListener(e -> depositEditor.editDeposit(new Deposit()));
+        addNewDepositBtn.addClickListener(e -> depositEditor.editDeposit(new Deposit(0L)));
 
 
         depositEditor.setChangeHandler(() -> {

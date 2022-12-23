@@ -31,7 +31,7 @@ public class CreditEditor extends Editor{
     ClientRepository clientRepository;
 
     CreditTypeRepository creditTypeRepository;
-    TextField balance = new TextField("Balance");
+    TextField balance = new TextField();
 
     Select<CreditType> creditTypeSelect = new Select<>();
 
@@ -50,8 +50,6 @@ public class CreditEditor extends Editor{
 
         creditTypes = creditTypeRepository.findAll();
         clients = clientRepository.findAll();
-        creditTypeSelect.setLabel("Choose credit type:");
-        clientSelect.setLabel("Choose the client:");
         add(balance, creditTypeSelect, clientSelect, actions);
 
         binder.bindInstanceFields(this);
@@ -75,6 +73,10 @@ public class CreditEditor extends Editor{
     }
 
     public final void editCredit(Credit credit) {
+        creditTypeSelect.setLabel(messageSource.getMessage("ChooseCreditType",null, locale));
+        clientSelect.setLabel(messageSource.getMessage("ChooseClient",null, locale));
+        balance.setLabel(messageSource.getMessage("balance",null,locale));
+
         if (credit == null) {
             setVisible(false);
             return;
@@ -117,9 +119,9 @@ public class CreditEditor extends Editor{
         }
 
         binder.setBean(this.credit);
-        binder.forField(balance).withConverter(new StringToLongConverter("Not a number"))
+        binder.forField(balance).withConverter(new StringToLongConverter(messageSource.getMessage("NotANumber",null, locale)))
                     .withValidator(balance -> balance > creditTypeSelect.getValue().getMinAmount() &&
-                            balance < creditTypeSelect.getValue().getMaxAmount(), "Wrong balance")
+                            balance < creditTypeSelect.getValue().getMaxAmount(), messageSource.getMessage("WrongBalance",null, locale))
                     .bind(Credit::getBalance, Credit::setBalance);
 
         setVisible(true);

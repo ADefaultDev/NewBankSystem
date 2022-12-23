@@ -64,6 +64,9 @@ public abstract class Editor extends VerticalLayout implements KeyNotifier {
 
     public void setLocale(Locale locale){
         this.locale=locale;
+        save.setText(messageSource.getMessage("Save",null, locale));
+        cancel.setText(messageSource.getMessage("Cancel",null, locale));
+        delete.setText(messageSource.getMessage("Delete",null, locale));
     }
 
     public void valueChange(HasValue.ValueChangeEvent<String> e) {
