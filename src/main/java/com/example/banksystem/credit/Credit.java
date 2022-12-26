@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import javax.persistence.*;
 import java.sql.SQLDataException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name="credit")
@@ -17,6 +19,8 @@ public class Credit {
     private CreditType creditType;
     @Column(name = "balance", length = 15, nullable = false)
     private Long balance;
+    @Column(name = "creationDate", nullable = false)
+    private LocalDate date;
     @ManyToOne(fetch = FetchType.EAGER)
     @JsonBackReference
     private Client client;
@@ -26,10 +30,15 @@ public class Credit {
 
     }
 
+
     public Credit(CreditType creditType, Long balance) throws SQLDataException {
         this.creditType = creditType;
-        this.balance = balance;
-
+        if(this.creditType.getMinAmount()>balance || this.creditType.getMaxAmount()<balance){
+            throw new SQLDataException("Credit balance is invalid");
+        }else{
+            this.balance=balance;
+        }
+        this.date = LocalDate.now();
     }
     public Credit(Long balance) {
         this.balance = balance;
@@ -65,6 +74,13 @@ public class Credit {
 
     public void setClient(Client client) {
         this.client = client;
+    }
+
+    public LocalDate getDate(){
+        return date;
+    }
+    public void setDate(LocalDate date){
+        this.date = date;
     }
 
 

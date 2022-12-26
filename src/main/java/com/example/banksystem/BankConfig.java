@@ -19,6 +19,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.util.StringUtils;
 
+import java.sql.SQLDataException;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -183,10 +184,12 @@ public class BankConfig {
                         }catch (NumberFormatException e){
                             System.out.println("Balance must be greater than zero");
                         }
-                        Credit newCredit = new Credit();
-                        newCredit.setCreditType(creditType);
-                        newCredit.setBalance(balance);
-                        cl.addCredit(newCredit);
+                        try {
+                            Credit newCredit = new Credit(creditType, balance);
+                            cl.addCredit(newCredit);
+                        }catch (SQLDataException e){
+                            System.out.println("Invalid balance");
+                        }
                         clientRepository.saveAll(List.of(cl));
                     }catch (IndexOutOfBoundsException e){
                         System.out.println("No such credit type");
