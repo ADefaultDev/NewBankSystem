@@ -1,13 +1,11 @@
 package com.example.banksystem.deposit;
 
 import com.example.banksystem.client.Client;
-import com.example.banksystem.credit.CreditType;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import javax.persistence.*;
 import java.sql.SQLDataException;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name="deposit")
@@ -22,7 +20,7 @@ public class Deposit {
     @Column(name = "balance", length = 15, nullable = false)
     private Long balance;
     @Column(name = "creationDate", nullable = false)
-    private LocalDate date;
+    private LocalDate creationDate;
     @ManyToOne(fetch = FetchType.EAGER)
     @JsonBackReference
     private Client client;
@@ -45,11 +43,12 @@ public class Deposit {
         }else{
             this.balance=balance;
         }
-        this.date = LocalDate.now();
+        this.creationDate = LocalDate.now();
     }
 
     public Deposit(long balance) {
         this.balance=balance;
+        this.creationDate = LocalDate.now();
     }
 
     public Long getId() {
@@ -84,11 +83,11 @@ public class Deposit {
         this.client = client;
     }
 
-    public LocalDate getDate(){
-        return date;
+    public LocalDate getCreationDate(){
+        return creationDate;
     }
-    public void setDate(LocalDate date){
-        this.date = date;
+    public void setCreationDate(LocalDate creationDate){
+        this.creationDate = creationDate;
     }
 
     @Override

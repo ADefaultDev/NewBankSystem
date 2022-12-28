@@ -164,7 +164,7 @@ public class MainView extends VerticalLayout{
     }
 
     public void reorderCredits(){
-        List<String> columnNames = List.of("id","client","balance","creditType");
+        List<String> columnNames = List.of("id","client","balance","creditType","creationDate","expirationDate","creditExpired");
         List<Grid.Column<Credit>> creditColumnList = new ArrayList<>();
         for (String columnName : columnNames){
             creditColumnList.add(creditGrid.getColumnByKey(columnName));
@@ -248,7 +248,7 @@ public class MainView extends VerticalLayout{
     }
 
     public void reorderDeposits(){
-        List<String> columnNames = List.of("id","client","balance","depositType");
+        List<String> columnNames = List.of("id","client","balance","depositType","creationDate");
         List<Grid.Column<Deposit>> depositColumnList = new ArrayList<>();
         for (String columnName : columnNames){
             depositColumnList.add(depositGrid.getColumnByKey(columnName));

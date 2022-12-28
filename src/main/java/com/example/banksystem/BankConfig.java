@@ -3,6 +3,7 @@ package com.example.banksystem;
 import com.example.banksystem.client.Client;
 import com.example.banksystem.client.ClientRepository;
 import com.example.banksystem.credit.Credit;
+import com.example.banksystem.credit.CreditRepository;
 import com.example.banksystem.credit.CreditType;
 import com.example.banksystem.credit.CreditTypeRepository;
 import com.example.banksystem.currency.CurrencyRepository;
@@ -20,6 +21,7 @@ import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.util.StringUtils;
 
 import java.sql.SQLDataException;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -36,28 +38,19 @@ public class BankConfig {
     @Bean
     CommandLineRunner commandLineRunner(ClientRepository clientRepository,
                                         CreditTypeRepository creditTypeRepository, CurrencyRepository currencyRepository,
-                                        DepositTypeRepository depositTypeRepository)
+                                        DepositTypeRepository depositTypeRepository, CreditRepository creditRepository)
     {
         return args -> {
-            creationInterface(clientRepository, creditTypeRepository,depositTypeRepository, currencyRepository);
+            creationInterface(clientRepository, creditTypeRepository,depositTypeRepository, currencyRepository, creditRepository);
 
 
         };
     }
 
     void creationInterface(ClientRepository clientRepository, CreditTypeRepository creditTypeRepository,
-                           DepositTypeRepository depositTypeRepository, CurrencyRepository currencyRepository){
+                           DepositTypeRepository depositTypeRepository, CurrencyRepository currencyRepository, CreditRepository creditRepository){
+        expirationStatusUpdate(creditRepository);
         while(true) {
-            if(currencyRepository.count()<1){
-                //currencyInitialization(currencyRepository);
-            }
-            if(creditTypeRepository.count()<1){
-                //creditTypeInitialization(creditTypeRepository, currencyRepository);
-            }
-            if(depositTypeRepository.count()<1){
-                //depositTypeInitialization(depositTypeRepository);
-            }
-
             System.out.println("Choose option: ");
             System.out.println("1.Create a client");
             System.out.println("2.Create a credit");
@@ -207,6 +200,15 @@ public class BankConfig {
         System.out.println("Credit creation complete");
     }
 
+    void expirationStatusUpdate(CreditRepository creditRepository){
+        for (Credit credit:
+                creditRepository.findAll()) {
+            if(credit.getExpirationDate().isEqual(LocalDate.now()) || credit.getExpirationDate().isBefore(LocalDate.now())){
+                credit.setCreditExpired("Yes");
+                creditRepository.save(credit);
+            }
+        }
+    }
     void depositCreation(ClientRepository clientRepository, DepositTypeRepository depositTypeRepository){
         while (true) {
             System.out.println("Do you want to create new deposit?(Y/N)");
@@ -296,21 +298,25 @@ public class BankConfig {
 
     void generateRandomCredit(CreditTypeRepository creditTypeRepository, ClientRepository clientRepository){
         Client newClient = clientRepository.findAll().get(getRandomNumber(0,clientRepository.count()));
-        Credit newCredit = new Credit();
         CreditType creditType = creditTypeRepository.findAll().get(getRandomNumber(0,creditTypeRepository.count()));
-        newCredit.setCreditType(creditType);
-        newCredit.setBalance(generateRandomLong(creditType.getMinAmount(), creditType.getMaxAmount()));
-        newClient.addCredit(newCredit);
+        try {
+            Credit newCredit = new Credit(creditType,generateRandomLong(creditType.getMinAmount(), creditType.getMaxAmount()));
+            newClient.addCredit(newCredit);
+        }catch (SQLDataException e){
+
+        }
         clientRepository.save(newClient);
     }
 
     void generateRandomDeposit(DepositTypeRepository depositTypeRepository, ClientRepository clientRepository){
         Client newClient = clientRepository.findAll().get(getRandomNumber(0, clientRepository.count()));
-        Deposit newDeposit = new Deposit();
         DepositType depositType = depositTypeRepository.findAll().get(getRandomNumber(0,depositTypeRepository.count()));
-        newDeposit.setDepositType(depositType);
-        newDeposit.setBalance(generateRandomLong(depositType.getMinAmount(), depositType.getMaxAmount()));
-        newClient.addDeposit(newDeposit);
+        try {
+            Deposit newDeposit = new Deposit(depositType, generateRandomLong(depositType.getMinAmount(), depositType.getMaxAmount()));
+            newClient.addDeposit(newDeposit);
+        }catch (SQLDataException e){
+
+        }
         clientRepository.save(newClient);
     }
 
@@ -325,8 +331,6 @@ public class BankConfig {
     Long generateRandomLong(Long min, Long max){
         return min  + (long)(Math.random() * (max - min));
     }
-
-
     public int getRandomNumber(int min, long max){return (int) ((Math.random() * (max - min)) + min);}
     public int getRandomNumber(int min, int max) {
         return (int) ((Math.random() * (max - min)) + min);

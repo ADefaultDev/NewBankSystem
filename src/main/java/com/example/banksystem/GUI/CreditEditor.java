@@ -19,6 +19,7 @@ import com.vaadin.flow.spring.annotation.UIScope;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.ResourceBundleMessageSource;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Locale;
 
@@ -65,6 +66,7 @@ public class CreditEditor extends Editor{
         this.credit.setClient(clientSelect.getValue());
         binder.validate();
         if(binder.isValid()) {
+            this.credit.setExpirationDate(LocalDate.now().plusDays(this.credit.getCreditType().getRepaymentTime()));
             repository.save(credit);
             changeHandler.onChange();
         }
