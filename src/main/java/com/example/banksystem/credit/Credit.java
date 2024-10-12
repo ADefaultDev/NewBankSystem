@@ -15,7 +15,6 @@ public class Credit {
     @Column(name = "id")
     private Long id;
     @ManyToOne(fetch = FetchType.EAGER)
-    private CreditType creditType;
     @Column(name = "balance", length = 15, nullable = false)
     private Long balance;
     @Column(name = "creationDate", nullable = false)
